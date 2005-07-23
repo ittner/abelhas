@@ -171,7 +171,7 @@ local function adjpos(self, i)
   local p = self.parts[i]
   local i
   for i = 1, self.dims do
-    p.x[i] = range(p.mins[i], p.x[i] + p.v[i], p.maxs[i])
+    p.x[i] = range(self.mins[i], p.x[i] + p.v[i], self.maxs[i])
   end
 end
 
@@ -186,13 +186,13 @@ function run(self)
     "No termination criteria defined.")
 
   for i = 1, self.nparts do
-    self.parts[i] = makeRandomPart()
+    self.parts[i] = makeRandomPart(self)
   end
 
   while true do
 
     for i = 1, self.nparts do
-      evalpart(self, self.parts[i])
+      evalpart(self, i)
       if self.gbest then
         if self.parts[i].fit > self.parts[self.gbest].fit then
           self.gbest = i
