@@ -16,15 +16,13 @@ function new(p)
     maxs = {},      -- Maximum value, per dimension
     c1 = 0.5,       -- 'c1' factor
     c2 = 0.5,       -- 'c2' factor
-    nparts = 0,     -- Number of particles
+    nparts = 20,    -- Number of particles
     maxfit = nil,   -- Maximum fitness
     maxiter = nil,  -- Maximum iterations
     maxstag = nil,  -- Maximum fitness stagnation
     maxspeed = 3,   -- Maximum particle speed
     gbest = nil,    -- Index of the best particle in the swarm
-    parts = {},     -- Particles
-    iter = 0,       -- Iteration count
-    stag = 0        -- Stagnation count
+    parts = {}      -- Particles
   }
 
   setmetatable(sw, { __index = _M })
