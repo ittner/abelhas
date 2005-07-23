@@ -13,7 +13,7 @@ function new(p)
   local sw = {
     objfunc = nil   -- Objective function
     dims = 0,       -- Dimensions
-    decs = 0,       -- Decimal places
+    decs = 14,      -- Decimal places
     mins = {},      -- Minimum value, per dimension
     maxs = {},      -- Maximum value, per dimension
     c1 = 0.5,       -- 'c1' factor
@@ -25,6 +25,7 @@ function new(p)
     maxspeed = 3,   -- Maximum particle speed
     gbest = nil,    -- Index of the best particle in the swarm
     parts = {},     -- Particles
+    iter = 0,       -- Iteration count
     stag = 0        -- Stagnation count
   }
 
@@ -106,11 +107,10 @@ function setMaxIterations(self, max)
 end
 
 
-function makeRandomPart(self)
+local function makeRandomPart(self)
   local i
   local p = {
-    fit = self.worstfit,
-    pbest = self.worstfit,
+    fit = nil,        -- 'nil' is the worst possible fitness.
     x = {},
     p = {},
     v = {}
@@ -124,65 +124,100 @@ function makeRandomPart(self)
 end
 
 
-local function evaluateParticle(self, i)
+local function evalpart(self, i)
   local p = self.parts[i]
-  local fit = self.objfunc(p.p)
-  if fit > p.pbest then
-    p.pbest = fit
-    local i
-    for i = 1, self.dims do
-      p.p = p.x[i]
+  local fit = round(self.objfunc(p.p), self.decs)
+  if p.fit then
+    if fit > p.fit then
+      p.fit = fit
+      local i
+      for i = 1, self.dims do
+        p.p = p.x[i]
+      end
     end
+  else
+    p.fit = fit
   end
   return fit
 end
-    
 
 
--- Ajusta a velocidade de p em função de r
-function adjspeed(p, r)
+local function adjspeed(self, i)
   local r1 = math.random()
   local r2 = math.random()
-  local nv =  {
-    c1 * r1 * (p.p[1] - p.x[1]) + c2 * r2 * (r.p[1] - p.x[1]),
-    c1 * r1 * (p.p[2] - p.x[2]) + c2 * r2 * (r.p[2] - p.x[2])
-  }
-  p.v = {
-    range(-vmax, p.v[1] + nv[1], vmax),
-    range(-vmax, p.v[2] + nv[2], vmax)
-  }
-  return p.v
+  local p = self.parts[i]
+  local b = self.parts[self.gbest]
+  local i
+  for i = 1, self.dims do
+    p.v[i] = range(
+        self.mins[i],
+        self.c1 * r1 * (p.p[i] - p.x[i]) + self.c2 * r2 * (b.p[i] - p.x[i]),
+        self.maxs[i])
+  end
 end
 
--- Ajusta a posição de p com a velocidade previamente definida
-function adjpos(p)
-  p.x = {
-    range(minx, p.x[1] + p.v[1], maxx),
-    range(miny, p.x[2] + p.v[2], maxy)
-  }
-  return p.x
+
+local function adjpos(self, i)
+  local p = self.parts[i]
+  local i
+  for i = 1, self.dims do
+    p.x[i] = range(p.mins[i], p.x[i] + p.v[i], p.maxs[i])
+  end
 end
 
--- Inicializa o enxame com partículas aleatórias.
-for i = 1, nparts do
-  parts[i] = makepart()
-  objfunc(parts[i])
-end
 
-repeat
-  for i, p in ipairs(parts) do
-    objfunc(p)
-    if p.pbest < parts[gbest].pbest then
-      gbest = i
-      print(string.format("Novo ótimo: f=%03.2f\tx=%3.2f\ty=%3.2f",
-        p.pbest, p.p[1], p.p[2]))
+function run(self)
+  local iter = 0
+  local stag = 0
+  local i, p, lastbest
+
+  for i = 1, self.nparts do
+    self.parts[i] = makeRandomPart()
+  end
+
+  while true do
+
+    for i = 1, self.nparts do
+      evalpart(self, self.parts[i])
+      if self.gbest then
+        if self.parts[i].fit > self.parts[self.gbest].fit then
+          self.gbest = i
+        end
+      else
+        self.gbest = i
     end
-  end
-  for i, p in ipairs(parts) do
-    adjspeed(p, parts[gbest])
-    adjpos(p)
-  end
-  iter = iter + 1
-until (iter > maxiter) or (parts[gbest].pbest == 0)
 
-print("Iterações: ", iter)
+    if self.maxfit and (self.parts[self.gbest].fit >= self.maxfit) then
+      return(self.parts[self.gbest].p, self.parts[self.gbest].fit,
+        TERM_CONVERGED)
+    end
+
+    iter = iter + 1
+    if self.maxiter and (iter > self.maxiter) then
+      return(self.parts[self.gbest].p, self.parts[self.gbest].fit,
+        TERM_MAX_ITERATIONS)
+    end
+
+    if lastbest then
+      if lastbest > self.parts[self.gbest].fit then
+        stag = 0
+      end
+    end
+
+    stag = stag + 1
+    if self.maxstag and (stag > self.maxstag) then
+      return(self.parts[self.gbest].p, self.parts[self.gbest].fit,
+        TERM_MAX_STAGNATION)
+    end
+
+    for i = 1, self.nparts do
+      adjspeed(self, i)
+      adjpos(self, i)
+    end
+
+  end
+
+  return nil
+end
+
+
