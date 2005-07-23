@@ -1,0 +1,97 @@
+function round(n, p)
+  local m = 10.0 ^ (p or 0)
+  if (m*n - math.floor(m*n)) > 0.4 then
+    return math.ceil(m*n)/m
+  end
+  return math.floor(m*n)/m
+end
+
+
+function x(i,j)
+  print(round(i,j))
+end
+
+x(1.123456789)
+x(1.123456789, 0)
+x(1.123456789, 1)
+x(1.123456789, 2)
+x(1.123456789, 3)
+x(1.123456789, 4)
+x(1.123456789, 5)
+
+
+
+
+function round(n, p)
+  local m = 1
+  if p then
+    m = 10^p
+  end
+  if (m*n - m*math.floor(n)) > 4 then
+    return math.ceil(n*m)/m
+  end
+  return math.floor(n*m)/m
+end
+
+
+
+
+
+
+
+
+function round(n)
+  if (10*n - 10*math.floor(n)) > 4 then
+    return math.ceil(n) 
+  end
+  return math.floor(n) 
+end
+
+
+
+
+pso.TERMINATION_CONVER
+pso.TERMINATION_MAX_ITERATIONS
+pso.TERMINATION_FITNESS_STAGNATION
+
+swarm = pso:new()
+swarm:setDimensions(3)
+swarm:setDecimals(4)
+
+swarm:setFitnessFunction(myfit)
+swarm:setLimits(1, -200, 200)   -- Seta limites da dimensão 1
+swarm:setLimits(2, -200, 200)   -- Seta limites da dimensão 2
+swarm:setLimits(3, -200, 200)   -- Seta limites da dimensão 3
+
+swarm:setLimits(-200, 200)   -- Seta limites de todas as dimensões
+
+swarm:setC1(1)
+swarm:setC2(2)
+
+swarm:setMaxFitness(fit)
+swarm:setMaxIterations(maxiter)
+swarm:setMaxStagnation(maxstag)
+
+-- Hooks
+swarm:setBeforeInitHook(func)       -- Antes de criar o enxame
+swarm:setInsideInitHook(func)       -- A cada ciclo de criação do enxame
+swarm:setAfterInitHook(func)        -- Antes de criar o enxame
+
+swarm:setBeforeIterationHook(func)
+swarm:setIterationHook(func)
+swarm:setNewBestHook(func)
+swarm:setAfterIterationHook(func)
+
+swarm:setFinnishHook(func)
+
+
+best, iterations, reason = swarm:run()
+
+ai_hook
+bi_hook
+nb_hook
+i_hook
+f_hook
+
+
+
