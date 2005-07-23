@@ -5,20 +5,20 @@
 module "pso"
 require "math"
 
-TERMINATION_CONVER = 1
-TERMINATION_MAX_ITERATIONS = 2
-TERMINATION_FITNESS_STAGNATION = 3
+TERM_CONVERGED = 1
+TERM_MAX_ITERATIONS = 2
+TERM_MAX_STAGNATION = 3
 
 function new(p)
   local sw = {
-    objfunc = nil   -- Objective function
+    objfunc = nil,  -- Objective function
     dims = 0,       -- Dimensions
     decs = 14,      -- Decimal places
     mins = {},      -- Minimum value, per dimension
     maxs = {},      -- Maximum value, per dimension
     c1 = 0.5,       -- 'c1' factor
     c2 = 0.5,       -- 'c2' factor
-    nparts = 0      -- Number of particles
+    nparts = 0,     -- Number of particles
     maxfit = nil,   -- Maximum fitness
     maxiter = nil,  -- Maximum iterations
     maxstag = nil,  -- Maximum fitness stagnation
@@ -171,6 +171,10 @@ function run(self)
   local stag = 0
   local i, p, lastbest
 
+  assert(self.objfunc, "No objective function defined.")
+  assert(self.maxfit or self.maxiter or self.maxstag,
+    "No termination criteria defined.")
+
   for i = 1, self.nparts do
     self.parts[i] = makeRandomPart()
   end
@@ -185,17 +189,18 @@ function run(self)
         end
       else
         self.gbest = i
+      end
     end
 
     if self.maxfit and (self.parts[self.gbest].fit >= self.maxfit) then
-      return(self.parts[self.gbest].p, self.parts[self.gbest].fit,
-        TERM_CONVERGED)
+      return self.parts[self.gbest].p, self.parts[self.gbest].fit,
+            TERM_CONVERGED
     end
 
     iter = iter + 1
     if self.maxiter and (iter > self.maxiter) then
-      return(self.parts[self.gbest].p, self.parts[self.gbest].fit,
-        TERM_MAX_ITERATIONS)
+      return self.parts[self.gbest].p, self.parts[self.gbest].fit,
+        TERM_MAX_ITERATIONS
     end
 
     if lastbest then
@@ -206,8 +211,8 @@ function run(self)
 
     stag = stag + 1
     if self.maxstag and (stag > self.maxstag) then
-      return(self.parts[self.gbest].p, self.parts[self.gbest].fit,
-        TERM_MAX_STAGNATION)
+      return self.parts[self.gbest].p, self.parts[self.gbest].fit,
+        TERM_MAX_STAGNATION
     end
 
     for i = 1, self.nparts do
