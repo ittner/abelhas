@@ -1,5 +1,3 @@
-#!/usr/bin/env lua
-
 -- $Id$
 
 module "pso"
@@ -29,7 +27,7 @@ function new(p)
     stag = 0        -- Stagnation count
   }
 
-  setmetatable(sw, _M)
+  setmetatable(sw, { __index = _M })
   return sw
 end
 
@@ -57,6 +55,18 @@ end
 function setDecimals(self, decs)
   self.decs = decs
   return decs
+end
+
+
+function setC1(self, c)
+  self.c1 = c
+  return n
+end
+
+
+function setC2(self, c)
+  self.c2 = c
+  return n
 end
 
 
