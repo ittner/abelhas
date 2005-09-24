@@ -96,8 +96,8 @@ function setLimits(self, dim, min, max)
       self.maxs[k] = max
     end
   else
-    self.min[dim] = min
-    self.max[dim] = max
+    self.mins[dim] = min
+    self.maxs[dim] = max
   end
   return min, max
 end
@@ -211,10 +211,8 @@ function run(self)
         TERM_MAX_ITERATIONS
     end
 
-    if lastbest then
-      if lastbest > self.parts[self.gbest].fit then
-        stag = 0
-      end
+    if lastbest and (lastbest > self.parts[self.gbest].fit) then
+      stag = 0
     end
 
     stag = stag + 1
