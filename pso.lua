@@ -124,13 +124,13 @@ end
 
 
 local function evalpart(self, p)
-    local fit = round(self.objfunc(p.p), self.decs)
+    local fit = round(self.objfunc(p.x), self.decs)
     if p.fit then
         if fit > p.fit then
             p.fit = fit
             local i
             for i = 1, self.dims do
-                p.p = p.x[i]
+                p.p[i] = p.x[i]
             end
         end
     else
@@ -206,7 +206,6 @@ function run(self)
                 self.gbest = i
             end
         end
-        print("Bestfit", self.parts[self.gbest].fit)
 
         if self.maxfit and (self.parts[self.gbest].fit >= self.maxfit) then
             return self.parts[self.gbest].p, self.parts[self.gbest].fit,
