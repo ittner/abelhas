@@ -30,7 +30,7 @@ end
 
 local function round(n, p)
     local m = 10.0 ^ (p or 0)
-    if (m*n - math.floor(m*n)) > 0.4 then
+    if (m*n - math.floor(m*n)) >= 0.5 then
         return math.ceil(m*n)/m
     end
     return math.floor(m*n)/m
@@ -47,7 +47,7 @@ local function cspace(min, x, max)
     if (min < x) and (x < max) then
         return x
     else
-        return min + x - max
+        return min + math.mod(x, max)
     end
 end
 
@@ -93,20 +93,21 @@ end
 
 -- swarm:setLimits(1, -200, 200) - Set first dimension's limits
 -- swarm:setLimits(-200, 200)    - Set all dimensions limits
-function setLimits(self, dim, min, max)
-    if max == nil then
-        min = dim
-        max = min
-        local k
-        for k = 1, self.dims do
-            self.mins[k] = min
-            self.maxs[k] = max
+function setLimits(self, ...)
+    local args = { ... }
+    if #args == 3 then
+        local dim = args[1]
+        self.mins[dim] = args[2]
+        self.maxs[dim] = args[3]
+    elseif #args == 2 then
+        local i
+        for i = 1, self.dims do
+            self.mins[i] = args[1]
+            self.maxs[i] = args[2]
         end
     else
-        self.mins[dim] = min
-        self.maxs[dim] = max
+        error("bad number of arguments")
     end
-    return min, max
 end
 
 
@@ -122,25 +123,7 @@ function setMaxIterations(self, max)
 end
 
 
-local function makeRandomPart(self)
-    local i
-    local p = {
-        fit = nil,  -- 'nil' is the worst possible fitness.
-        x = {},     -- particle's position
-        p = {},     -- particle's best position (pbest)
-        v = {}      -- particle's velocity
-    }
-    for i = 1, self.dims do
-        p.x[i] = math.random(self.mins[i], self.maxs[i])
-        p.p[i] = math.random(self.mins[i], self.maxs[i])
-        p.v[i] = math.random(self.mins[i], self.maxs[i])
-    end
-    return p
-end
-
-
-local function evalpart(self, i)
-    local p = self.parts[i]
+local function evalpart(self, p)
     local fit = round(self.objfunc(p.p), self.decs)
     if p.fit then
         if fit > p.fit then
@@ -153,6 +136,24 @@ local function evalpart(self, i)
     else
         p.fit = fit
     end
+end
+
+
+local function makeRandomPart(self)
+    local i
+    local p = {
+        fit = nil,  -- 'nil' is the worst possible fitness.
+        x = {},     -- particle's position
+        p = {},     -- particle's best position (pbest)
+        v = {}      -- particle's velocity
+    }
+    for i = 1, self.dims do
+        p.x[i] = math.random(self.mins[i], self.maxs[i])
+        p.p[i] = p.x[i]
+        p.v[i] = math.random(self.mins[i], self.maxs[i])
+    end
+    evalpart(self, p)
+    return p
 end
 
 
@@ -196,7 +197,7 @@ function run(self)
     while true do
 
         for i = 1, self.nparts do
-            evalpart(self, i)
+            evalpart(self, self.parts[i])
             if self.gbest then
                 if self.parts[i].fit > self.parts[self.gbest].fit then
                     self.gbest = i
@@ -205,6 +206,7 @@ function run(self)
                 self.gbest = i
             end
         end
+        print("Bestfit", self.parts[self.gbest].fit)
 
         if self.maxfit and (self.parts[self.gbest].fit >= self.maxfit) then
             return self.parts[self.gbest].p, self.parts[self.gbest].fit,
