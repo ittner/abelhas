@@ -222,21 +222,21 @@ function run(self)
 
         if self.maxfit and (self.parts[self.gbest].fit >= self.maxfit) then
             return self.parts[self.gbest].p, self.parts[self.gbest].fit,
-                        TERM_CONVERGED
+                        TERM_CONVERGED, iter
         end
 
         iter = iter + 1
         if self.maxiter and (iter > self.maxiter) then
             return self.parts[self.gbest].p,
                 self.parts[self.gbest].fit,
-                TERM_MAX_ITERATIONS
+                TERM_MAX_ITERATIONS, iter
         end
 
         stag = stag + 1
         if self.maxstag and (stag > self.maxstag) then
             return self.parts[self.gbest].p,
                 self.parts[self.gbest].fit,
-                TERM_MAX_STAGNATION
+                TERM_MAX_STAGNATION, iter
         end
 
         for i = 1, self.nparts do
