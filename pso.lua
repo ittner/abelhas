@@ -44,7 +44,7 @@ end
 
 -- Implements a "continuous curve" space between 'min' and 'max'
 local function cspace(min, x, max)
-    if (min < x) and (x < max) then
+    if (min <= x) and (x <= max) then
         return x
     else
         return min + math.mod(x, max)
@@ -75,6 +75,11 @@ function setC2(self, c)
     return n
 end
 
+
+function setMaxSpeed(self, spd)
+    self.maxspeed = spd
+    return spd
+end
 
 function setParticles(self, n)
     self.nparts = n
@@ -113,13 +118,19 @@ end
 
 function setMaxFitness(self, max)
     self.maxfit = max
-    return maxf
+    return max
 end
 
 
 function setMaxIterations(self, max)
     self.maxiter = max
-    return maxf
+    return max
+end
+
+
+function setMaxStagnation(self, max)
+    self.maxstag = max
+    return max
 end
 
 
@@ -184,7 +195,7 @@ end
 function run(self)
     local iter = 0
     local stag = 0
-    local i, p, lastbest
+    local i, p
 
     assert(self.objfunc, "No objective function defined.")
     assert(self.maxfit or self.maxiter or self.maxstag,
@@ -200,10 +211,12 @@ function run(self)
             evalpart(self, self.parts[i])
             if self.gbest then
                 if self.parts[i].fit > self.parts[self.gbest].fit then
+                    stag = 0
                     self.gbest = i
                 end
             else
                 self.gbest = i
+                stag = 0
             end
         end
 
@@ -217,10 +230,6 @@ function run(self)
             return self.parts[self.gbest].p,
                 self.parts[self.gbest].fit,
                 TERM_MAX_ITERATIONS
-        end
-
-        if lastbest and (lastbest > self.parts[self.gbest].fit) then
-            stag = 0
         end
 
         stag = stag + 1
@@ -239,5 +248,4 @@ function run(self)
 
     return nil
 end
-
 
