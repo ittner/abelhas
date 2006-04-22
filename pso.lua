@@ -1,7 +1,6 @@
 -- $Id$
 
-module "pso"
-require "math"
+module("pso", package.seeall)
 
 TERM_CONVERGED = 1
 TERM_MAX_ITERATIONS = 2
@@ -40,6 +39,16 @@ end
 
 local function range(a, b, c)
     return math.max(a, math.min(b, c))
+end
+
+
+-- Implements a "continuous curve" space between 'min' and 'max'
+local function cspace(min, x, max)
+    if (min < x) and (x < max) then
+        return x
+    else
+        return min + x - max
+    end
 end
 
 
@@ -116,10 +125,10 @@ end
 local function makeRandomPart(self)
     local i
     local p = {
-        fit = nil,                -- 'nil' is the worst possible fitness.
-        x = {},
-        p = {},
-        v = {}
+        fit = nil,  -- 'nil' is the worst possible fitness.
+        x = {},     -- particle's position
+        p = {},     -- particle's best position (pbest)
+        v = {}      -- particle's velocity
     }
     for i = 1, self.dims do
         p.x[i] = math.random(self.mins[i], self.maxs[i])
@@ -144,7 +153,6 @@ local function evalpart(self, i)
     else
         p.fit = fit
     end
-    return fit
 end
 
 
@@ -156,9 +164,9 @@ local function adjspeed(self, i)
     local i
     for i = 1, self.dims do
         p.v[i] = range(
-                self.mins[i],
+                -self.maxspeed,
                 self.c1 * r1 * (p.p[i] - p.x[i]) + self.c2 * r2 * (b.p[i] - p.x[i]),
-                self.maxs[i])
+                self.maxspeed)
     end
 end
 
@@ -167,7 +175,7 @@ local function adjpos(self, i)
     local p = self.parts[i]
     local i
     for i = 1, self.dims do
-        p.x[i] = range(self.mins[i], p.x[i] + p.v[i], self.maxs[i])
+        p.x[i] = cspace(self.mins[i], p.x[i] + p.v[i], self.maxs[i])
     end
 end
 
@@ -205,7 +213,8 @@ function run(self)
 
         iter = iter + 1
         if self.maxiter and (iter > self.maxiter) then
-            return self.parts[self.gbest].p, self.parts[self.gbest].fit,
+            return self.parts[self.gbest].p,
+                self.parts[self.gbest].fit,
                 TERM_MAX_ITERATIONS
         end
 
@@ -215,7 +224,8 @@ function run(self)
 
         stag = stag + 1
         if self.maxstag and (stag > self.maxstag) then
-            return self.parts[self.gbest].p, self.parts[self.gbest].fit,
+            return self.parts[self.gbest].p,
+                self.parts[self.gbest].fit,
                 TERM_MAX_STAGNATION
         end
 
