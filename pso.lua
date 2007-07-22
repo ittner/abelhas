@@ -29,7 +29,9 @@ function new(dims)
         maxiter = nil,      -- Maximum iterations
         maxstag = nil,      -- Maximum fitness stagnation
         gbest = nil,        -- Index of the best particle in the swarm
-        parts = {}          -- Particles
+        parts = {},         -- Particles
+        nbhoook = nil,      -- New best hook
+        replhook = nil      -- Replacement hook
     }
 
     setmetatable(sw, { __index = _M })
@@ -215,10 +217,9 @@ end
 
 function setObjfunc(self, func)
     if type(objfunc) ~= "function" then
-        error("bad function")
+        error("Bad function")
     end
     self.objfunc = objfunc
-    return n
 end
 
 
@@ -329,6 +330,35 @@ function getMaxStagnation(self)
 end
 
 
+--- sw:setNewBestHook(function(...) end)
+--- Sets a function to be called when a new best particle if found. The
+--- function will receive the particle position, an per dimension. Passing
+--- 'nil' disables this feature.
+
+function setNewBestHook(self, func)
+    if type(objfunc) ~= "function" then
+        error("Bad function")
+    end
+    self.nbhook = func
+end
+
+
+--- sw:setReplacementHook(function(...) end)
+--- Sets a function to be called when a particle is replaced. The function
+--- will receive the position of the dead particle, an per dimension. Passing
+--- 'nil' disables this feature.
+
+function setNewBestHook(self, func)
+    if type(objfunc) ~= "function" then
+        error("Bad function")
+    end
+    self.replhook = func
+end
+
+
+
+
+
 -- Evaluates a particle. 
 
 local function evalpart(self, p)
@@ -418,6 +448,9 @@ function run(self)
         for i = 1, self.nparts do
             -- Particle replacement.
             if i ~= self.gbest and math.random() < self.repl then
+                if self.replhook then
+                    self.replhook(unpack(self.parts[i].b))
+                end
                 randomizeParticle(self, self.parts[i])
             end
 
@@ -426,8 +459,12 @@ function run(self)
                 if self.parts[i].fit > self.parts[self.gbest].fit then
                     stag = 0
                     self.gbest = i
+                    if self.nbhook then
+                        self.nbhook(unpack(self.parts[self.gbest].b))
+                    end
                 end
             else
+                -- Do not call the hook for the "first" best.
                 self.gbest = i
                 stag = 0
             end
