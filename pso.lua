@@ -23,6 +23,7 @@ function new(dims)
         c1 = 0.5,           -- c1, cognitive factor
         c2 = 0.5,           -- c2, social factor
         nparts = 20,        -- Number of particles
+        repl = 0,           -- Particle replacement.
         fitr = nil,         -- Fitness rounding
         maxfit = nil,       -- Maximum fitness
         maxiter = nil,      -- Maximum iterations
@@ -169,6 +170,26 @@ function setMaxSpeed(self, spd)
 end
 
 
+--- sw:setReplacementProb(prob)
+--- Sets the probability of a particle being replaced by another, randomly
+--- generated, one. This feature tries to avoid local optmima simulating the
+--- death and replacement of a particle. The probability must be a number
+--- between 0 and 1. The best particle in the swarm is never replaced.
+
+function setReplacementProb(self, prob)
+    assert(0 <= prob and prob <= 1, "Bad replacement probability")
+    self.repl = prob
+end
+
+
+--- sw:getReplacementProb(prob)
+--- Gets the probability of a particle being replaced by another.
+
+function getReplacementProb(self)
+    return self.repl
+end
+
+
 --- sw:setParticles(number)
 --- Sets the number of particles.
 
@@ -230,7 +251,7 @@ function setLimits(self, min, max)
 end
 
 
---- sw:setFitnessRouding(decs)
+--- sw:setFitnessRounding(decs)
 --- Makes the solver round up the fitness to 'decs' decimal places. The value
 --- must be a positive integer or 'nil' to disable this feature.
 
@@ -240,7 +261,7 @@ function setFitnessRounding(self, decs)
 end
 
 
---- sw:getFitnessRouding()
+--- sw:getFitnessRounding()
 --- Returns the number of decimal places used to round up the fitness values,
 --- or 'nil' if this feature is not used. 
 
@@ -395,6 +416,11 @@ function run(self)
     while true do
 
         for i = 1, self.nparts do
+            -- Particle replacement.
+            if i ~= self.gbest and math.random() < self.repl then
+                randomizeParticle(self, self.parts[i])
+            end
+
             evalpart(self, self.parts[i])
             if self.gbest then
                 if self.parts[i].fit > self.parts[self.gbest].fit then
@@ -405,11 +431,12 @@ function run(self)
                 self.gbest = i
                 stag = 0
             end
+
         end
 
         if self.maxfit and (self.parts[self.gbest].fit >= self.maxfit) then
             return self.parts[self.gbest].b, self.parts[self.gbest].fit,
-                        TERM_CONVERGED, iter
+                TERM_CONVERGED, iter
         end
 
         iter = iter + 1
