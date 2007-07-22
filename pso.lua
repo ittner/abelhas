@@ -1,8 +1,7 @@
 -- $Id$
 
-module("pso")
 
-local math = require "math"
+module("pso", package.seeall)
 
 
 TERM_CONVERGED = 1
@@ -21,9 +20,10 @@ function new(dims)
         minp = {},          -- Minimum value, per dimension
         maxp = {},          -- Maximum value, per dimension
         maxs = {},          -- Maximum particle speed, per dimension
-        c1 = 0.5,           -- c1, social factor
-        c2 = 0.5,           -- c2, cognitive factor
+        c1 = 0.5,           -- c1, cognitive factor
+        c2 = 0.5,           -- c2, social factor
         nparts = 20,        -- Number of particles
+        fitr = nil,         -- Fitness rounding
         maxfit = nil,       -- Maximum fitness
         maxiter = nil,      -- Maximum iterations
         maxstag = nil,      -- Maximum fitness stagnation
@@ -102,16 +102,16 @@ end
 
 
 --- sw:setC1(c)
---- Sets the social factor (a number between 0 and 1).
+--- Sets the cognitive factor (a number between 0 and 1).
 
 function setC1(self, c)
-    assert((c >= 0) and (c <= 1)), "Value out of range")
+    -- assert(c >= 0 and c <= 1, "Value out of range")
     self.c1 = c
 end
 
 
 --- sw:getC1()
---- Returns the social factor (a number between 0 and 1).
+--- Returns the cognitive factor (a number between 0 and 1).
 
 function getC1(self)
     return self.c1
@@ -119,23 +119,23 @@ end
 
 
 --- sw:setC2(c)
---- Sets the cognitive factor (a number between 0 and 1).
+--- Sets the social factor (a number between 0 and 1).
 
 function setC2(self, c)
-    assert((c >= 0) and (c <= 1)), "Value out of range")
+    -- assert(c >= 0 and c <= 1, "Value out of range")
     self.c2 = c
 end
 
 
 --- sw:getC2()
---- Returns the cognitive factor (a number between 0 and 1).
+--- Returns the social factor (a number between 0 and 1).
 
 function getC2(self)
     return self.c2
 end
 
 
---- sw:setMaxSpeed(dimension, speed)
+--- sw:setMaxSpeedDim(dimension, speed)
 --- Sets the maximum speed for the dimension
 
 function setMaxSpeedDim(self, dim, spd)
@@ -156,9 +156,9 @@ end
 --- sw:setMaxSpeed(speed)
 --- Sets the maximum speed for all dimensions.
 
-function setMaxSpeedDim(self, spd)
-    for i = 1, self.dims do
-        self:setMaxSpeedDim(spd)
+function setMaxSpeed(self, spd)
+    for dim = 1, self.dims do
+        self:setMaxSpeedDim(dim, spd)
     end
 end
 
@@ -198,7 +198,7 @@ end
 --- sw:setLimitsDim(dimension, min, max)
 --- Sets the limits for the given dimension.
 
-function setLimitsDim(dim, min, max)
+function setLimitsDim(self, dim, min, max)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
     self.minp[dim] = min
     self.maxp[dim] = max
@@ -219,8 +219,28 @@ end
 
 function setLimits(self, min, max)
     for dim = 1, self.dims do
-        self:setLimitsDim(i, min, max)
+        self:setLimitsDim(dim, min, max)
     end
+end
+
+
+--- sw:setFitnessRouding(decs)
+--- Makes the solver round up the fitness to 'decs' decimal places. The value
+--- must be a positive integer or 'nil' to disable this feature.
+
+function setFitnessRounding(self, decs)
+    assert(decs > 0, "Bad number of decimal places.")
+    self.fitr = decs
+end
+
+
+--- sw:getFitnessRouding()
+--- Returns the number of decimal places used to round up the fitness values,
+--- or 'nil' if this feature is not used. 
+
+function setFitnessRouding(self, decs)
+    assert(decs > 0, "Bad number of decimal places.")
+    self.fitr = decs
 end
 
 
@@ -243,7 +263,7 @@ end
 
 
 --- sw:setMaxIterations(maxi)
---- Sets the maximum number of iterations as a termination criterium.  This
+--- Sets the maximum number of iterations as a termination criterium. This
 --- must be a integer greater than zero or 'nil' to disable its use as
 --- termination criterium.
 
@@ -282,16 +302,15 @@ function getMaxStagnation(self)
 end
 
 
--- Evaluates a particle...
+-- Evaluates a particle. 
 
 local function evalpart(self, p)
-    local fit = round(self.objfunc(p.x), self.decs)
+    local fit = round(self.objfunc(unpack(p.x)), self.fitr)
     if p.fit then
-        if fit > p.fit then
+        if fit > p.fit then    -- New particle's best found.
             p.fit = fit
-            local i
             for i = 1, self.dims do
-                p.p[i] = p.x[i]
+                p.b[i] = p.x[i]
             end
         end
     else
@@ -300,59 +319,67 @@ local function evalpart(self, p)
 end
 
 
-local function makeRandomPart(self)
-    local i
-    local p = {
-        fit = nil,  -- 'nil' is the worst possible fitness.
-        x = {},     -- particle's position
-        p = {},     -- particle's best position (pbest)
-        v = {}      -- particle's velocity
-    }
+-- Makes a new random particle or randomizes an existing one.
+
+local function randomizeParticle(self, p)
+    p = p or {}
+    p.fit = nil -- 'nil' is the worst possible fitness.
+    p.x = {}    -- particle's position
+    p.b = {}    -- particle's best position (pbest)
+    p.v = {}    -- particle's velocity
     for i = 1, self.dims do
-        p.x[i] = math.random(self.mins[i], self.maxs[i])
-        p.p[i] = p.x[i]
-        p.v[i] = math.random(self.mins[i], self.maxs[i])
+        p.x[i] = math.random(self.minp[i], self.maxp[i])
+        p.b[i] = p.x[i]
+        p.v[i] = math.random(-self.maxs[i], self.maxs[i])
     end
     evalpart(self, p)
     return p
 end
 
 
-local function adjspeed(self, i)
+-- Updates the velocity and positonf of a particle.
+
+local function updateParticle(self, i)
     local r1 = math.random()
     local r2 = math.random()
     local p = self.parts[i]
     local b = self.parts[self.gbest]
-    local i
+
     for i = 1, self.dims do
         p.v[i] = range(
-                -self.maxspeed,
-                self.c1 * r1 * (p.p[i] - p.x[i]) + self.c2 * r2 * (b.p[i] - p.x[i]),
-                self.maxspeed)
+                -self.maxs[i],
+                self.c1 * r1 * (p.b[i] - p.x[i]) +  -- Cognitive
+                self.c2 * r2 * (b.b[i] - p.x[i]),   -- Social
+                self.maxs[i])
+        -- Add rounding here?
+        p.x[i] = cspace(self.minp[i], p.x[i] + p.v[i], self.maxp[i])
     end
 end
 
 
-local function adjpos(self, i)
-    local p = self.parts[i]
-    local i
-    for i = 1, self.dims do
-        p.x[i] = cspace(self.mins[i], p.x[i] + p.v[i], self.maxs[i])
-    end
-end
-
+--- sw:run()
+--- Runs the algorithm and returns a array with the position of the particle,
+--- the fitness, the reason of termination (pso.TERM_CONVERGED,
+--- pso.TERM_MAX_ITERATIONS, or pso.TERM_MAX_STAGNATION) and the total of
+--- iterations.
 
 function run(self)
     local iter = 0
     local stag = 0
-    local i, p
+    local p
 
     assert(self.objfunc, "No objective function defined.")
     assert(self.maxfit or self.maxiter or self.maxstag,
         "No termination criteria defined.")
 
+    for i = 1, self.dims do
+        assert(self.maxs[i], "Required value for maximum speed not given.")
+        assert(self.maxp[i], "Required value for maximum position not given.")
+        assert(self.minp[i], "Required value for minimum position not given.")
+    end
+
     for i = 1, self.nparts do
-        self.parts[i] = makeRandomPart(self)
+        self.parts[i] = randomizeParticle(self)
     end
 
     while true do
@@ -371,31 +398,29 @@ function run(self)
         end
 
         if self.maxfit and (self.parts[self.gbest].fit >= self.maxfit) then
-            return self.parts[self.gbest].p, self.parts[self.gbest].fit,
+            return self.parts[self.gbest].b, self.parts[self.gbest].fit,
                         TERM_CONVERGED, iter
         end
 
         iter = iter + 1
         if self.maxiter and (iter > self.maxiter) then
-            return self.parts[self.gbest].p,
-                self.parts[self.gbest].fit,
+            return self.parts[self.gbest].b, self.parts[self.gbest].fit,
                 TERM_MAX_ITERATIONS, iter
         end
 
         stag = stag + 1
         if self.maxstag and (stag > self.maxstag) then
-            return self.parts[self.gbest].p,
-                self.parts[self.gbest].fit,
+            return self.parts[self.gbest].b, self.parts[self.gbest].fit,
                 TERM_MAX_STAGNATION, iter
         end
 
         for i = 1, self.nparts do
-            adjspeed(self, i)
-            adjpos(self, i)
+            updateParticle(self, i)
         end
 
     end
 
     return nil
 end
+
 
