@@ -1,4 +1,4 @@
--- Tries to write "Lua is Cool" by swaping letters. Combinatorial search of
+-- Tries to write "Lua is Cool" by swaping letters. Combinatorial search
 -- space of 256^11 possibilities (88 bits).
 
 require "pso"
@@ -37,12 +37,12 @@ swarm:setLimits(0, 255)         -- String is iso-8859-1.
 swarm:setPrecision(0)           -- No decimal places.
 swarm:setMaxSpeed(30.0)
 swarm:setFitnessRounding(0)     -- Fitness has no decimal places.
-swarm:setReplacementProb(0.05)  -- 5% of the particles dead each iteration.
+swarm:setReplacementProb(0.05)  -- 5% of the particles die each iteration.
 swarm:setMaxFitness(0)          -- Stops when the exact solution is found.
 swarm:setMaxStagnation(1000)    -- Surrenders after fight so much...
 
 -- Shows when a new best is found.
-swarm:setNewBestHook(function(...) print(arconcat({...})) end)
+-- swarm:setNewBestHook(function(...) print(arconcat({...})) end)
 
 local ret, fit, reason, iter = swarm:run()
 print(arconcat(ret), fit, reason, iter)

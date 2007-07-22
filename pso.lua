@@ -498,7 +498,7 @@ function run(self)
 end
 
 
--- Debug utilities;
+-- Debug utilities:
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 function printParticles(self)
