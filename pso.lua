@@ -42,7 +42,10 @@ end
 -- Rounds the number 'n' to 'p' decimal places.
 
 local function round(n, p)
-    local m = 10.0 ^ (p or 0)
+    if not p then
+        return n
+    end
+    local m = 10.0 ^ p
     if (m*n - math.floor(m*n)) >= 0.5 then
         return math.ceil(m*n)/m
     end
@@ -73,7 +76,8 @@ end
 
 
 --- sw:setPrecision(decs)
---- Sets the precision for all dimensions (in number of decimal places)
+--- Sets the precision for all dimensions (in number of decimal places). 
+--- 'nil' disables this feature.
 
 function setPrecision(self, decs)
     for i = 1, self.dims do
@@ -84,10 +88,12 @@ end
 
 --- sw:setPrecisionDim(dim, decs)
 --- Sets the precision for the dimension 'dim', for 'decs' decimal places.
+--- 'nil' disables this feature.
 
 function setPrecisionDim(self, dim, decs)
+    assert(not decs or decs >= 0, "Bad number of decimal places.")
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
-    self.decs[dim] = decs
+    self.prec[dim] = decs
 end
 
 
@@ -97,7 +103,7 @@ end
 
 function getPrecisionDim(self, dim)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
-    return self.decs[dim]
+    return self.prec[dim]
 end
 
 
@@ -229,7 +235,7 @@ end
 --- must be a positive integer or 'nil' to disable this feature.
 
 function setFitnessRounding(self, decs)
-    assert(decs > 0, "Bad number of decimal places.")
+    assert(not decs or decs >= 0, "Bad number of decimal places.")
     self.fitr = decs
 end
 
@@ -344,6 +350,7 @@ local function updateParticle(self, i)
     local r2 = math.random()
     local p = self.parts[i]
     local b = self.parts[self.gbest]
+    local prec = self.prec  -- Optimization
 
     for i = 1, self.dims do
         p.v[i] = range(
@@ -351,8 +358,11 @@ local function updateParticle(self, i)
                 self.c1 * r1 * (p.b[i] - p.x[i]) +  -- Cognitive
                 self.c2 * r2 * (b.b[i] - p.x[i]),   -- Social
                 self.maxs[i])
-        -- Add rounding here?
-        p.x[i] = cspace(self.minp[i], p.x[i] + p.v[i], self.maxp[i])
+        local x = p.x[i] + p.v[i]
+        if prec[i] then     -- Position rounding
+            x = round(x, prec[i])
+        end
+        p.x[i] = cspace(self.minp[i], x, self.maxp[i])
     end
 end
 
@@ -421,6 +431,16 @@ function run(self)
     end
 
     return nil
+end
+
+
+-- Debug utilities;
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+function printParticles(self)
+    for i = 1, self.nparts do
+        print(unpack(self.parts[i].b))
+    end
 end
 
 
