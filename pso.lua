@@ -1,25 +1,32 @@
 -- $Id$
 
-module("pso", package.seeall)
+module("pso")
+
+local math = require "math"
+
 
 TERM_CONVERGED = 1
 TERM_MAX_ITERATIONS = 2
 TERM_MAX_STAGNATION = 3
 
-function new(p)
+
+--- pso.new(dimensions)
+--- Constructor. Returns a new swarm.
+
+function new(dims)
     local sw = {
         objfunc = nil,      -- Objective function
-        dims = 0,           -- Dimensions
-        decs = 14,          -- Decimal places
-        mins = {},          -- Minimum value, per dimension
-        maxs = {},          -- Maximum value, per dimension
-        c1 = 0.5,           -- 'c1' factor
-        c2 = 0.5,           -- 'c2' factor
+        dims = dims,        -- Number of dimensions
+        prec = {},          -- Precision (decimal places, per dimension)
+        minp = {},          -- Minimum value, per dimension
+        maxp = {},          -- Maximum value, per dimension
+        maxs = {},          -- Maximum particle speed, per dimension
+        c1 = 0.5,           -- c1, social factor
+        c2 = 0.5,           -- c2, cognitive factor
         nparts = 20,        -- Number of particles
         maxfit = nil,       -- Maximum fitness
         maxiter = nil,      -- Maximum iterations
         maxstag = nil,      -- Maximum fitness stagnation
-        maxspeed = 3,       -- Maximum particle speed
         gbest = nil,        -- Index of the best particle in the swarm
         parts = {}          -- Particles
     }
@@ -27,6 +34,12 @@ function new(p)
     setmetatable(sw, { __index = _M })
     return sw
 end
+
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+
+-- Rounds the number 'n' to 'p' decimal places.
 
 local function round(n, p)
     local m = 10.0 ^ (p or 0)
@@ -37,12 +50,16 @@ local function round(n, p)
 end
 
 
+-- Returns the number 'b' if it is within the range [a,c]; otherwise, 
+-- returns a or c
+
 local function range(a, b, c)
     return math.max(a, math.min(b, c))
 end
 
 
--- Implements a "continuous curve" space between 'min' and 'max'
+-- Implements a continuous and closed space between 'min' and 'max'
+
 local function cspace(min, x, max)
     if (min <= x) and (x <= max) then
         return x
@@ -52,40 +69,122 @@ local function cspace(min, x, max)
 end
 
 
-function setDimensions(self, dims)
-    self.dims = dims
-    return dims
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+
+--- sw:setPrecision(decs)
+--- Sets the precision for all dimensions (in number of decimal places)
+
+function setPrecision(self, decs)
+    for i = 1, self.dims do
+        self:setPrecisionDim(i, decs)
+    end
 end
 
 
-function setDecimals(self, decs)
-    self.decs = decs
-    return decs
+--- sw:setPrecisionDim(dim, decs)
+--- Sets the precision for the dimension 'dim', for 'decs' decimal places.
+
+function setPrecisionDim(self, dim, decs)
+    assert(dim > 0 and dim <= self.dims, "Bad dimension")
+    self.decs[dim] = decs
 end
 
+
+--- sw:getPrecisionDim(dim)
+--- Returns the precision for the dimension 'dim', as the number of decimal
+--- places.
+
+function getPrecisionDim(self, dim)
+    assert(dim > 0 and dim <= self.dims, "Bad dimension")
+    return self.decs[dim]
+end
+
+
+--- sw:setC1(c)
+--- Sets the social factor (a number between 0 and 1).
 
 function setC1(self, c)
+    assert((c >= 0) and (c <= 1)), "Value out of range")
     self.c1 = c
-    return n
 end
 
+
+--- sw:getC1()
+--- Returns the social factor (a number between 0 and 1).
+
+function getC1(self)
+    return self.c1
+end
+
+
+--- sw:setC2(c)
+--- Sets the cognitive factor (a number between 0 and 1).
 
 function setC2(self, c)
+    assert((c >= 0) and (c <= 1)), "Value out of range")
     self.c2 = c
-    return n
 end
 
 
-function setMaxSpeed(self, spd)
-    self.maxspeed = spd
-    return spd
+--- sw:getC2()
+--- Returns the cognitive factor (a number between 0 and 1).
+
+function getC2(self)
+    return self.c2
 end
+
+
+--- sw:setMaxSpeed(dimension, speed)
+--- Sets the maximum speed for the dimension
+
+function setMaxSpeedDim(self, dim, spd)
+    assert(dim > 0 and dim <= self.dims, "Bad dimension")
+    self.maxs[dim] = spd
+end
+
+
+--- sw:getMaxSpeed(dimension, speed)
+--- Returns the maximum speed for the dimension
+
+function getMaxSpeedDim(self, dim)
+    assert(dim > 0 and dim <= self.dims, "Bad dimension")
+    return self.maxs[dim]
+end
+
+
+--- sw:setMaxSpeed(speed)
+--- Sets the maximum speed for all dimensions.
+
+function setMaxSpeedDim(self, spd)
+    for i = 1, self.dims do
+        self:setMaxSpeedDim(spd)
+    end
+end
+
+
+--- sw:setParticles(number)
+--- Sets the number of particles.
 
 function setParticles(self, n)
+    assert(n > 0, "Bad number of particles")
     self.nparts = n
-    return n
 end
 
+
+--- sw:getParticles()
+--- Returns the number of particles.
+
+function getParticles(self)
+    return self.nparts
+end
+
+
+--- sw:setObjfunc(function (...)  .... end)
+--- Sets the objective function. The particle position will be passed as an
+--- argument for each dimension.  The objetive function must return the
+--- fitness of the given particle as a number with higher values for better
+--- solutions.
 
 function setObjfunc(self, func)
     if type(objfunc) ~= "function" then
@@ -96,43 +195,94 @@ function setObjfunc(self, func)
 end
 
 
--- swarm:setLimits(1, -200, 200) - Set first dimension's limits
--- swarm:setLimits(-200, 200)    - Set all dimensions limits
-function setLimits(self, ...)
-    local args = { ... }
-    if #args == 3 then
-        local dim = args[1]
-        self.mins[dim] = args[2]
-        self.maxs[dim] = args[3]
-    elseif #args == 2 then
-        local i
-        for i = 1, self.dims do
-            self.mins[i] = args[1]
-            self.maxs[i] = args[2]
-        end
-    else
-        error("bad number of arguments")
+--- sw:setLimitsDim(dimension, min, max)
+--- Sets the limits for the given dimension.
+
+function setLimitsDim(dim, min, max)
+    assert(dim > 0 and dim <= self.dims, "Bad dimension")
+    self.minp[dim] = min
+    self.maxp[dim] = max
+end    
+
+
+--- sw:getLimitsDim(dimension)
+--- Returns the minimum and maximum values for the given dimension.
+
+function getLimitsDim(self, dim)
+    assert(dim > 0 and dim <= self.dims, "Bad dimension")
+    return self.minp[dim], self.maxp[dim]
+end
+
+
+--- sw:setLimits(min, max)
+--- Sets the limits for all dimensions.
+
+function setLimits(self, min, max)
+    for dim = 1, self.dims do
+        self:setLimitsDim(i, min, max)
     end
 end
 
 
+--- sw:setMaxFitness(maxf)
+--- Sets the maximum fitness as a termination criterium. Fitness must be a
+--- number or 'nil' to disable its use as termination criterium.
+
 function setMaxFitness(self, max)
     self.maxfit = max
-    return max
 end
 
+
+--- sw:getMaxFitness()
+--- Returns the maximum fitness, or 'nil' if it is not used as termination
+--- criteria.
+
+function getMaxFitness(self)
+    return self.maxfit
+end
+
+
+--- sw:setMaxIterations(maxi)
+--- Sets the maximum number of iterations as a termination criterium.  This
+--- must be a integer greater than zero or 'nil' to disable its use as
+--- termination criterium.
 
 function setMaxIterations(self, max)
+    assert(max > 0, "Bad number of iterations")
     self.maxiter = max
-    return max
 end
 
+
+--- sw:getMaxIterations()
+--- Returns the maximum number of iterations, or 'nil' if it is not used as
+--- termination criteria.
+
+function getMaxIterations(self)
+    return self.maxiter
+end
+
+
+--- sw:setMaxStagnation(maxs)
+--- Sets the maximum number of stagnated iterations as a termination
+--- criterium. This must be a integer greater than zero or 'nil' to disable
+--- its use as termination criterium.
 
 function setMaxStagnation(self, max)
+    assert(max > 0, "Bad number of iterations")
     self.maxstag = max
-    return max
 end
 
+
+--- sw:getMaxStagnation()
+--- Returns the maximum number of stagnated iterations, or 'nil' if it is not
+--- used as termination criteria.
+
+function getMaxStagnation(self)
+    return self.maxstag
+end
+
+
+-- Evaluates a particle...
 
 local function evalpart(self, p)
     local fit = round(self.objfunc(p.x), self.decs)
