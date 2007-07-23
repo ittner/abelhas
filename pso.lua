@@ -397,8 +397,6 @@ end
 -- Updates the velocity and positonf of a particle.
 
 local function updateParticle(self, i)
-    local r1 = math.random()
-    local r2 = math.random()
     local p = self.parts[i]
     local b = self.parts[self.gbest]
     local prec = self.prec  -- Optimization
@@ -406,8 +404,8 @@ local function updateParticle(self, i)
     for i = 1, self.dims do
         p.v[i] = range(
                 -self.maxs[i],
-                self.c1 * r1 * (p.b[i] - p.x[i]) +  -- Cognitive
-                self.c2 * r2 * (b.b[i] - p.x[i]),   -- Social
+                self.c1 * math.random() * (p.b[i] - p.x[i]) +  -- Cognitive
+                self.c2 * math.random() * (b.b[i] - p.x[i]),   -- Social
                 self.maxs[i])
         local x = p.x[i] + p.v[i]
         if prec[i] then     -- Position rounding
