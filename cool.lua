@@ -1,10 +1,10 @@
--- Tries to write "Lua is Cool" by swaping letters. Combinatorial search
--- space of 256^11 possibilities (88 bits).
+-- Tries to write "Lua is Cool!" by swapping letters. Combinatorial search
+-- space of 256^12 possibilities (96 bits).
 
 require "pso"
 
 local ar = { }
-local str = "Lua is cool"
+local str = "Lua is cool!"
 for i = 1, #str do
     ar[i] = str:sub(i, i):byte()
 end
@@ -39,7 +39,7 @@ swarm:setMaxSpeed(30.0)
 swarm:setFitnessRounding(0)     -- Fitness has no decimal places.
 swarm:setReplacementProb(0.05)  -- 5% of the particles die each iteration.
 swarm:setMaxFitness(0)          -- Stops when the exact solution is found.
-swarm:setMaxStagnation(1000)    -- Surrenders after fight so much...
+swarm:setMaxStagnation(100)     -- Surrenders after fight so much...
 
 -- Shows when a new best is found.
 -- swarm:setNewBestHook(function(...) print(arconcat({...})) end)
