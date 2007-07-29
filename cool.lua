@@ -1,4 +1,5 @@
--- Tries to write "Lua is Cool!" by swapping letters. Combinatorial search
+
+-- Tries to write "Lua is cool!" by swapping bytes. Discrete search
 -- space of 256^12 possibilities (96 bits).
 
 require "pso"

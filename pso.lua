@@ -1,3 +1,32 @@
+--- PSO - A Lua module for particle swarm optmization.
+--- (c) 2007 Alexandre Erwin Ittner <aittner@netuno.com.br>
+---
+---
+--- Permission is hereby granted, free of charge, to any person obtaining
+--- a copy of this software and associated documentation files (the
+--- "Software"), to deal in the Software without restriction, including
+--- without limitation the rights to use, copy, modify, merge, publish,
+--- distribute, sublicense, and/or sell copies of the Software, and to
+--- permit persons to whom the Software is furnished to do so, subject to
+--- the following conditions:
+---
+--- The above copyright notice and this permission notice shall be
+--- included in all copies or substantial portions of the Software.
+---
+--- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+--- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+--- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+--- IN NO EVENT SHALL THE AUTHOR OR COPYRIGHT HOLDER BE LIABLE FOR ANY
+--- CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+--- TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+--- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+---
+--- If you use this package in a product, an acknowledgment in the product
+--- documentation would be greatly appreciated (but it is not required).
+---
+---
+
+
 -- $Id$
 
 
@@ -174,9 +203,9 @@ end
 
 --- sw:setReplacementProb(prob)
 --- Sets the probability of a particle being replaced by another, randomly
---- generated, one. This feature tries to avoid local optmima simulating the
---- death and replacement of a particle. The probability must be a number
---- between 0 and 1. The best particle in the swarm is never replaced.
+--- generated, one. This feature tries to avoid local optima by the simulation
+--- of the death and replacement of a particle. The probability must be a
+--- number between 0 and 1. The best particle in the swarm is never replaced.
 
 function setReplacementProb(self, prob)
     assert(0 <= prob and prob <= 1, "Bad replacement probability")
@@ -400,12 +429,13 @@ local function updateParticle(self, i)
     local p = self.parts[i]
     local b = self.parts[self.gbest]
     local prec = self.prec  -- Optimization
+    local rnd = math.random
 
     for i = 1, self.dims do
         p.v[i] = range(
                 -self.maxs[i],
-                self.c1 * math.random() * (p.b[i] - p.x[i]) +  -- Cognitive
-                self.c2 * math.random() * (b.b[i] - p.x[i]),   -- Social
+                self.c1 * rnd() * (p.b[i] - p.x[i]) +  -- Cognitive
+                self.c2 * rnd() * (b.b[i] - p.x[i]),   -- Social
                 self.maxs[i])
         local x = p.x[i] + p.v[i]
         if prec[i] then     -- Position rounding
@@ -462,7 +492,7 @@ function run(self)
                     end
                 end
             else
-                -- Do not call the hook for the "first" best.
+                -- The new best hook is never called for the first best.
                 self.gbest = i
                 stag = 0
             end
