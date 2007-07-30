@@ -244,7 +244,7 @@ end
 --- fitness of the given particle as a number with higher values for better
 --- solutions.
 
-function setObjfunc(self, func)
+function setObjfunc(self, objfunc)
     if type(objfunc) ~= "function" then
         error("Bad function")
     end
