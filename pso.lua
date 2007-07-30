@@ -365,7 +365,7 @@ end
 --- 'nil' disables this feature.
 
 function setNewBestHook(self, func)
-    if type(objfunc) ~= "function" then
+    if type(func) ~= "function" then
         error("Bad function")
     end
     self.nbhook = func
@@ -378,7 +378,7 @@ end
 --- 'nil' disables this feature.
 
 function setNewBestHook(self, func)
-    if type(objfunc) ~= "function" then
+    if type(func) ~= "function" then
         error("Bad function")
     end
     self.replhook = func
