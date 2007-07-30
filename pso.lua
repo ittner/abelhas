@@ -377,7 +377,7 @@ end
 --- will receive the position of the dead particle, an per dimension. Passing
 --- 'nil' disables this feature.
 
-function setNewBestHook(self, func)
+function setReplacementHook(self, func)
     if type(func) ~= "function" then
         error("Bad function")
     end
