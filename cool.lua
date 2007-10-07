@@ -36,7 +36,7 @@ end
 
 math.randomseed(os.time())
 
-swarm = pso.new(#str)
+local swarm = pso.new(#str)
 swarm:setObjfunc(objfunc)
 swarm:setParticles(50)
 swarm:setC1(1.0)                -- Cognitive factor.
