@@ -1,14 +1,21 @@
 
+-- A example for PSO.
+--
 -- Tries to write "Lua is cool!" by swapping bytes. Discrete search
 -- space of 256^12 possibilities (96 bits).
+--
 
 require "pso"
 
-local ar = { }
-local str = "Lua is cool!"
+local str = "Lua is cool!"                      -- The desired string.
+-- local str = "As I said before, Lua is cool!" -- A nicer example (248 bits)
+-- local str = "Methinks it is like a weasel"   -- As Dawkins used before ;)
+
+local ar = { }                  -- Converts the string into a array.
 for i = 1, #str do
     ar[i] = str:sub(i, i):byte()
 end
+
 
 function arconcat(ar)
     local nstr = ""
@@ -43,7 +50,7 @@ swarm:setMaxFitness(0)          -- Stops when the exact solution is found.
 swarm:setMaxStagnation(100)     -- Surrenders after fight so much...
 
 -- Shows when a new best is found.
--- swarm:setNewBestHook(function(...) print(arconcat({...})) end)
+swarm:setNewBestHook(function(...) print(arconcat({...})) end)
 
 local ret, fit, reason, iter = swarm:run()
 print(arconcat(ret), fit, reason, iter)

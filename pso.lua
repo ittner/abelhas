@@ -32,6 +32,7 @@
 
 module("pso", package.seeall)
 
+VERSION = "1.0"
 
 TERM_CONVERGED = 1
 TERM_MAX_ITERATIONS = 2
@@ -39,7 +40,7 @@ TERM_MAX_STAGNATION = 3
 
 
 --- pso.new(dimensions)
---- Constructor. Returns a new swarm.
+--- Constructor. Returns a new swarm with the given number of dimensions.
 
 function new(dims)
     local sw = {
@@ -109,7 +110,8 @@ end
 
 --- sw:setPrecision(decs)
 --- Sets the precision for all dimensions (in number of decimal places). 
---- 'nil' disables this feature.
+--- 'nil' disables this feature and allows the values to assume the maximum
+--- precision allowed by the Lua numbers.
 
 function setPrecision(self, decs)
     for i = 1, self.dims do
@@ -120,7 +122,8 @@ end
 
 --- sw:setPrecisionDim(dim, decs)
 --- Sets the precision for the dimension 'dim', for 'decs' decimal places.
---- 'nil' disables this feature.
+--- 'nil' disables this feature and allows the values to assume the maximum
+--- precision allowed by the Lua numbers.
 
 function setPrecisionDim(self, dim, decs)
     assert(not decs or decs >= 0, "Bad number of decimal places.")
@@ -140,16 +143,17 @@ end
 
 
 --- sw:setC1(c)
---- Sets the cognitive factor (a number between 0 and 1).
+--- Sets the cognitive factor (number, 0 or greater).
 
 function setC1(self, c)
     -- assert(c >= 0 and c <= 1, "Value out of range")
+    assert(c >= 0, "Value out of range")
     self.c1 = c
 end
 
 
 --- sw:getC1()
---- Returns the cognitive factor (a number between 0 and 1).
+--- Returns the cognitive factor (number, 0 or greater).
 
 function getC1(self)
     return self.c1
@@ -157,16 +161,17 @@ end
 
 
 --- sw:setC2(c)
---- Sets the social factor (a number between 0 and 1).
+--- Sets the social factor (number, 0 or greater).
 
 function setC2(self, c)
     -- assert(c >= 0 and c <= 1, "Value out of range")
+    assert(c >= 0, "Value out of range")
     self.c2 = c
 end
 
 
 --- sw:getC2()
---- Returns the social factor (a number between 0 and 1).
+--- Returns the social factor (number, 0 or greater).
 
 function getC2(self)
     return self.c2
@@ -174,7 +179,7 @@ end
 
 
 --- sw:setMaxSpeedDim(dimension, speed)
---- Sets the maximum speed for the dimension
+--- Sets the maximum speed for a particle in the given dimension
 
 function setMaxSpeedDim(self, dim, spd)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
@@ -183,7 +188,7 @@ end
 
 
 --- sw:getMaxSpeed(dimension, speed)
---- Returns the maximum speed for the dimension
+--- Returns the maximum speed for a particle in the given dimension.
 
 function getMaxSpeedDim(self, dim)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
