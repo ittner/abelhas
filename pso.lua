@@ -497,9 +497,9 @@ local function randomizeParticle(self, p)
     p.b = {}    -- particle's best position (pbest)
     p.v = {}    -- particle's velocity
     for i = 1, self.dims do
-        p.x[i] = math.random(self.minp[i], self.maxp[i])
+        p.x[i] = (self.maxp[i] - self.minp[i]) * math.random() + self.minp[i]
         p.b[i] = p.x[i]
-        p.v[i] = math.random(-self.maxs[i], self.maxs[i])
+        p.v[i] = 2 * self.maxs[i] * (math.random() - 0.5)
     end
     evalpart(self, p)
     return p
