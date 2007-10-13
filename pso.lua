@@ -39,8 +39,11 @@ TERM_MAX_ITERATIONS = 2
 TERM_MAX_STAGNATION = 3
 
 
+---
 --- pso.new(dimensions)
+---
 --- Constructor. Returns a new swarm with the given number of dimensions.
+---
 
 function new(dims)
     local sw = {
@@ -74,7 +77,6 @@ end
 
 
 -- Rounds the number 'n' to 'p' decimal places.
-
 local function round(n, p)
     if not p then
         return n
@@ -89,14 +91,12 @@ end
 
 -- Returns the number 'b' if it is within the range [a,c]; otherwise, 
 -- returns a or c
-
 local function range(a, b, c)
     return math.max(a, math.min(b, c))
 end
 
 
 -- Implements a continuous and closed space between 'min' and 'max'
-
 local function cspace(min, x, max)
     if (min <= x) and (x <= max) then
         return x
@@ -109,11 +109,13 @@ end
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
+---
 --- sw:setPrecision(decs)
+---
 --- Sets the precision for all dimensions (in number of decimal places). 
 --- 'nil' disables this feature and allows the values to assume the maximum
 --- precision allowed by the Lua numbers.
-
+---
 function setPrecision(self, decs)
     for i = 1, self.dims do
         self:setPrecisionDim(i, decs)
@@ -121,11 +123,13 @@ function setPrecision(self, decs)
 end
 
 
+---
 --- sw:setPrecisionDim(dim, decs)
+---
 --- Sets the precision for the dimension 'dim', for 'decs' decimal places.
 --- 'nil' disables this feature and allows the values to assume the maximum
 --- precision allowed by the Lua numbers.
-
+---
 function setPrecisionDim(self, dim, decs)
     assert(not decs or decs >= 0, "Bad number of decimal places.")
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
@@ -133,19 +137,23 @@ function setPrecisionDim(self, dim, decs)
 end
 
 
+---
 --- sw:getPrecisionDim(dim)
+---
 --- Returns the precision for the dimension 'dim', as the number of decimal
 --- places.
-
+---
 function getPrecisionDim(self, dim)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
     return self.prec[dim]
 end
 
 
+---
 --- sw:setC1(c)
+---
 --- Sets the cognitive factor (number, 0 or greater).
-
+---
 function setC1(self, c)
     -- assert(c >= 0 and c <= 1, "Value out of range")
     assert(c >= 0, "Value out of range")
@@ -153,17 +161,21 @@ function setC1(self, c)
 end
 
 
+---
 --- sw:getC1()
+---
 --- Returns the cognitive factor (number, 0 or greater).
-
+---
 function getC1(self)
     return self.c1
 end
 
 
+---
 --- sw:setC2(c)
+---
 --- Sets the social factor (number, 0 or greater).
-
+---
 function setC2(self, c)
     -- assert(c >= 0 and c <= 1, "Value out of range")
     assert(c >= 0, "Value out of range")
@@ -171,35 +183,43 @@ function setC2(self, c)
 end
 
 
+---
 --- sw:getC2()
+---
 --- Returns the social factor (number, 0 or greater).
-
+---
 function getC2(self)
     return self.c2
 end
 
 
+---
 --- sw:setMaxSpeedDim(dimension, speed)
+---
 --- Sets the maximum speed for a particle in the given dimension
-
+---
 function setMaxSpeedDim(self, dim, spd)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
     self.maxs[dim] = spd
 end
 
 
+---
 --- sw:getMaxSpeed(dimension, speed)
+---
 --- Returns the maximum speed for a particle in the given dimension.
-
+---
 function getMaxSpeedDim(self, dim)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
     return self.maxs[dim]
 end
 
 
+---
 --- sw:setMaxSpeed(speed)
+---
 --- Sets the maximum speed for all dimensions.
-
+---
 function setMaxSpeed(self, spd)
     for dim = 1, self.dims do
         self:setMaxSpeedDim(dim, spd)
@@ -207,49 +227,59 @@ function setMaxSpeed(self, spd)
 end
 
 
+---
 --- sw:setReplacementProb(prob)
+---
 --- Sets the probability of a particle being replaced by another, randomly
 --- generated, one. This feature tries to avoid local optima by the simulation
 --- of the death and replacement of a particle. The probability must be a
 --- number between 0 and 1. The best particle in the swarm is never replaced.
-
+---
 function setReplacementProb(self, prob)
     assert(0 <= prob and prob <= 1, "Bad replacement probability")
     self.repl = prob
 end
 
 
+---
 --- sw:getReplacementProb(prob)
+---
 --- Gets the probability of a particle being replaced by another.
-
+---
 function getReplacementProb(self)
     return self.repl
 end
 
 
+---
 --- sw:setParticles(number)
+---
 --- Sets the number of particles.
-
+---
 function setParticles(self, n)
     assert(n > 0, "Bad number of particles")
     self.nparts = n
 end
 
 
+---
 --- sw:getParticles()
+---
 --- Returns the number of particles.
-
+---
 function getParticles(self)
     return self.nparts
 end
 
 
+---
 --- sw:setFitnessFunction(function (...)  .... end)
+---
 --- Sets the fitness function. The particle position will be passed as an
 --- argument for each dimension.  The fitness function must return the
 --- fitness of the given particle as a number with higher values for better
 --- solutions.
-
+---
 function setFitnessFunction(self, func)
     if type(func) ~= "function" then
         error("Bad function")
@@ -258,9 +288,11 @@ function setFitnessFunction(self, func)
 end
 
 
+---
 --- sw:setLimitsDim(dimension, min, max)
+---
 --- Sets the limits for the given dimension.
-
+---
 function setLimitsDim(self, dim, min, max)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
     self.minp[dim] = min
@@ -268,18 +300,22 @@ function setLimitsDim(self, dim, min, max)
 end    
 
 
+---
 --- sw:getLimitsDim(dimension)
+---
 --- Returns the minimum and maximum values for the given dimension.
-
+---
 function getLimitsDim(self, dim)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
     return self.minp[dim], self.maxp[dim]
 end
 
 
---- sw:setLimits(min, max)
---- Sets the limits for all dimensions.
 
+--- sw:setLimits(min, max)
+---
+--- Sets the limits for all dimensions.
+---
 function setLimits(self, min, max)
     for dim = 1, self.dims do
         self:setLimitsDim(dim, min, max)
@@ -287,89 +323,107 @@ function setLimits(self, min, max)
 end
 
 
+---
 --- sw:setFitnessRounding(decs)
+---
 --- Makes the solver round up the fitness to 'decs' decimal places. The value
 --- must be a positive integer or 'nil' to disable this feature.
-
+---
 function setFitnessRounding(self, decs)
     assert(not decs or decs >= 0, "Bad number of decimal places.")
     self.fitr = decs
 end
 
 
+---
 --- sw:getFitnessRounding()
+---
 --- Returns the number of decimal places used to round up the fitness values,
 --- or 'nil' if this feature is not used. 
-
+---
 function setFitnessRouding(self, decs)
     assert(decs > 0, "Bad number of decimal places.")
     self.fitr = decs
 end
 
 
+---
 --- sw:setMaxFitness(maxf)
+---
 --- Sets the maximum fitness as a termination criterium. Fitness must be a
 --- number or 'nil' to disable its use as termination criterium.
-
+---
 function setMaxFitness(self, max)
     self.maxfit = max
 end
 
 
+---
 --- sw:getMaxFitness()
+---
 --- Returns the maximum fitness, or 'nil' if it is not used as termination
 --- criteria.
-
+---
 function getMaxFitness(self)
     return self.maxfit
 end
 
 
+---
 --- sw:setMaxIterations(maxi)
+---
 --- Sets the maximum number of iterations as a termination criterium. This
 --- must be a integer greater than zero or 'nil' to disable its use as
 --- termination criterium.
-
+---
 function setMaxIterations(self, max)
     assert(max > 0, "Bad number of iterations")
     self.maxiter = max
 end
 
 
+---
 --- sw:getMaxIterations()
+---
 --- Returns the maximum number of iterations, or 'nil' if it is not used as
 --- termination criteria.
-
+---
 function getMaxIterations(self)
     return self.maxiter
 end
 
 
+---
 --- sw:setMaxStagnation(maxs)
+---
 --- Sets the maximum number of stagnated iterations as a termination
 --- criterium. This must be a integer greater than zero or 'nil' to disable
 --- its use as termination criterium.
-
+---
 function setMaxStagnation(self, max)
     assert(max > 0, "Bad number of iterations")
     self.maxstag = max
 end
 
 
+---
 --- sw:getMaxStagnation()
+---
 --- Returns the maximum number of stagnated iterations, or 'nil' if it is not
 --- used as termination criteria.
-
+---
 function getMaxStagnation(self)
     return self.maxstag
 end
 
 
+---
 --- sw:setNewBestHook(function(...) end)
+---
 --- Sets a function to be called when a new best particle if found. The
 --- function will receive the particle position, an per dimension. Passing
 --- 'nil' disables this feature.
-
+---
 function setNewBestHook(self, func)
     if type(func) ~= "function" then
         error("Bad function")
@@ -378,11 +432,13 @@ function setNewBestHook(self, func)
 end
 
 
+---
 --- sw:setReplacementHook(function(...) end)
+---
 --- Sets a function to be called when a particle is replaced. The function
 --- will receive the position of the dead particle, an per dimension. Passing
 --- 'nil' disables this feature.
-
+---
 function setReplacementHook(self, func)
     if type(func) ~= "function" then
         error("Bad function")
@@ -391,7 +447,9 @@ function setReplacementHook(self, func)
 end
 
 
+---
 --- sw:setIterationHook(function(parts, iter) ... end)
+---
 --- Sets a function to be called for each iteration of the optimizer. The
 --- function will receive a array of particles as first argument and the
 --- number of the current iteration as second argument.  Each particle in
@@ -407,7 +465,6 @@ end
 ---
 --- Warning: Abuse of this feature may slow the algorithm down!
 ---
-
 function setIterationHook(self, func)
     if type(func) ~= "function" then
         error("Bad function")
@@ -417,7 +474,6 @@ end
 
 
 -- Evaluates a particle. 
-
 local function evalpart(self, p)
     local fit = round(self.fitfunc(unpack(p.x)), self.fitr)
     if p.fit then
@@ -434,7 +490,6 @@ end
 
 
 -- Makes a new random particle or randomizes an existing one.
-
 local function randomizeParticle(self, p)
     p = p or {}
     p.fit = nil -- 'nil' is the worst possible fitness.
@@ -452,7 +507,6 @@ end
 
 
 -- Updates the velocity and positonf of a particle.
-
 local function updateParticle(self, i)
     local p = self.parts[i]
     local b = self.parts[self.gbest]
@@ -474,12 +528,14 @@ local function updateParticle(self, i)
 end
 
 
+---
 --- sw:run()
+---
 --- Runs the algorithm and returns a array with the position of the particle,
 --- the fitness, the reason of termination (pso.TERM_CONVERGED,
 --- pso.TERM_MAX_ITERATIONS, or pso.TERM_MAX_STAGNATION) and the total of
 --- iterations.
-
+---
 function run(self)
     local iter = 0
     local stag = 0
