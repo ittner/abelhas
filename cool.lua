@@ -1,14 +1,15 @@
 
--- A example for PSO.
+-- cool.lua - a example for PSO. 
 --
--- Tries to write "Lua is cool!" by swapping bytes. Discrete search
--- space of 256^12 possibilities (96 bits).
+-- This program tries to write "Lua is cool!" by swapping bytes; It features
+-- a discrete search in a space of 256^12 possibilities (96 bits) and was
+-- inspired by the weasel example by Richard Dawkins in The Blind Watchmaker.
 --
 
 require "pso"
 
-local str = "Lua is cool!"                      -- The desired string.
--- local str = "As I said before, Lua is cool!" -- A nicer example (248 bits)
+local str = "Lua is cool!"                      -- The string
+-- local str = "As I said before, Lua is cool!" -- A harder example (248 bits)
 -- local str = "Methinks it is like a weasel"   -- As Dawkins used before ;)
 
 local ar = { }                  -- Converts the string into a array.
@@ -17,7 +18,7 @@ for i = 1, #str do
 end
 
 
-function arconcat(ar)
+local function arconcat(ar)
     local nstr = ""
     for i = 1, #ar do
         nstr = nstr .. string.char(ar[i])
@@ -25,7 +26,11 @@ function arconcat(ar)
     return nstr
 end
 
-function objfunc(...)
+
+-- Fitness function. Calculates the distance between a solution and the
+-- phrase. Smaller distances are better.
+
+local function objfunc(...)
     local args = { ... }
     local fit = 0
     for i = 1, #args do
@@ -34,10 +39,11 @@ function objfunc(...)
     return fit
 end
 
+
 math.randomseed(os.time())
 
 local swarm = pso.new(#str)
-swarm:setObjfunc(objfunc)
+swarm:setFitnessFunction(objfunc)
 swarm:setParticles(50)
 swarm:setC1(1.0)                -- Cognitive factor.
 swarm:setC2(2.0)                -- Social factor.
@@ -53,5 +59,5 @@ swarm:setMaxStagnation(100)     -- Surrenders after fight so much...
 swarm:setNewBestHook(function(...) print(arconcat({...})) end)
 
 local ret, fit, reason, iter = swarm:run()
-print(arconcat(ret), fit, reason, iter)
+print("Done:", arconcat(ret), fit, reason, iter)
 

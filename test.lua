@@ -8,7 +8,7 @@ math.randomseed(os.time())
 
 swarm = pso.new(2)
 swarm:setLimits(-5000.0, 5000.0)
-swarm:setObjfunc(function(x, y)
+swarm:setFitnessFunction(function(x, y)
   return -math.abs(x-200) - math.abs(y-200)
 end)
 swarm:setParticles(30)

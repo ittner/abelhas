@@ -1,7 +1,16 @@
 
--- Optimizes the Schwefel's function 7
--- f_7(x) = \sum_{i=1}^n -x_i \times \sin \left(\sqrt{|x_i|}\right),\,  -500 \le x_i \le 500 
+-- Optimizes the Schwefel's function 7 - Another Abelhas PSO example.
+--
+--          n            
+-- f7(x) = sum -xi * sin(sqrt(|xi|))         -512 <= x <= 512
+--         i=1
+--
+--  or
+--
+-- f_7(x) = \sum_{i=1}^n -x_i \times \sin \left(\sqrt{|x_i|}\right),\,  -512 \le x_i \le 512
+--
 -- Search space: -512 to +512
+
 
 require "pso"
 
@@ -16,7 +25,7 @@ local sqrt = math.sqrt
 local abs = math.abs
 local sin = math.sin
 
-swarm:setObjfunc(function(...)
+swarm:setFitnessFunction(function(...)
     local xn = { ... }
     local fit = 0
     for i = 1, #xn do

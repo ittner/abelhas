@@ -44,7 +44,7 @@ TERM_MAX_STAGNATION = 3
 
 function new(dims)
     local sw = {
-        objfunc = nil,      -- Objective function
+        fitfunc = nil,      -- Fitness function
         dims = dims,        -- Number of dimensions
         prec = {},          -- Precision (decimal places, per dimension)
         minp = {},          -- Minimum value, per dimension
@@ -243,17 +243,17 @@ function getParticles(self)
 end
 
 
---- sw:setObjfunc(function (...)  .... end)
---- Sets the objective function. The particle position will be passed as an
---- argument for each dimension.  The objetive function must return the
+--- sw:setFitnessFunction(function (...)  .... end)
+--- Sets the fitness function. The particle position will be passed as an
+--- argument for each dimension.  The fitness function must return the
 --- fitness of the given particle as a number with higher values for better
 --- solutions.
 
-function setObjfunc(self, objfunc)
-    if type(objfunc) ~= "function" then
+function setFitnessFunction(self, func)
+    if type(func) ~= "function" then
         error("Bad function")
     end
-    self.objfunc = objfunc
+    self.fitfunc = func
 end
 
 
@@ -396,7 +396,7 @@ end
 -- Evaluates a particle. 
 
 local function evalpart(self, p)
-    local fit = round(self.objfunc(unpack(p.x)), self.fitr)
+    local fit = round(self.fitfunc(unpack(p.x)), self.fitr)
     if p.fit then
         if fit > p.fit then    -- New particle's best found.
             p.fit = fit
@@ -462,7 +462,7 @@ function run(self)
     local stag = 0
     local p
 
-    assert(self.objfunc, "No objective function defined.")
+    assert(self.fitfunc, "No fitness function defined.")
     assert(self.maxfit or self.maxiter or self.maxstag,
         "No termination criteria defined.")
 
