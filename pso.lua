@@ -531,12 +531,12 @@ function run(self)
             return self.parts[self.gbest].b, self.parts[self.gbest].fit,
                 TERM_CONVERGED, iter
         end
-        
+
+        iter = iter + 1        
         if self.iterhook then
            self.iterhook(self.parts, iter)
         end 
 
-        iter = iter + 1
         if self.maxiter and (iter > self.maxiter) then
             return self.parts[self.gbest].b, self.parts[self.gbest].fit,
                 TERM_MAX_ITERATIONS, iter
