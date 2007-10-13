@@ -61,7 +61,8 @@ function new(dims)
         gbest = nil,        -- Index of the best particle in the swarm
         parts = {},         -- Particles
         nbhoook = nil,      -- New best hook
-        replhook = nil      -- Replacement hook
+        replhook = nil,     -- Replacement hook
+        iterhook = nil      -- Iteration hook
     }
 
     setmetatable(sw, { __index = _M })
@@ -390,7 +391,28 @@ function setReplacementHook(self, func)
 end
 
 
+--- sw:setIterationHook(function(parts) ... end)
+--- Sets a function to be called for each iteration of the optimizer. The
+--- function will receive a array of particles, where each particle is a
+--- table with the following fields:
+--- 
+---   fit  the fitness value for the best position (number);
+---   x    particle's position in the n-dimensional space (array of numbers);
+---   b    particle's best position (array of numbers);
+---   v    particle's velocity (array of numbers).
+--- 
+--- these values may be read, but SHOULD NOT be changed or redefined.
+--- Passing 'nil' disables this feature.
+---
+--- Warning: Abuse of this feature may slow the algorithm down!
+---
 
+function setIterationHook(self, func)
+    if type(func) ~= "function" then
+        error("Bad function")
+    end
+    self.iterhook = func
+end
 
 
 -- Evaluates a particle. 
@@ -508,6 +530,10 @@ function run(self)
             return self.parts[self.gbest].b, self.parts[self.gbest].fit,
                 TERM_CONVERGED, iter
         end
+        
+        if self.iterhook then
+           self.iterhook(self.parts)
+        end 
 
         iter = iter + 1
         if self.maxiter and (iter > self.maxiter) then
