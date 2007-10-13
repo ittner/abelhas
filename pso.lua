@@ -391,10 +391,11 @@ function setReplacementHook(self, func)
 end
 
 
---- sw:setIterationHook(function(parts) ... end)
+--- sw:setIterationHook(function(parts, iter) ... end)
 --- Sets a function to be called for each iteration of the optimizer. The
---- function will receive a array of particles, where each particle is a
---- table with the following fields:
+--- function will receive a array of particles as first argument and the
+--- number of the current iteration as second argument.  Each particle in
+--- the particle array is a table with the following fields:
 --- 
 ---   fit  the fitness value for the best position (number);
 ---   x    particle's position in the n-dimensional space (array of numbers);
@@ -532,7 +533,7 @@ function run(self)
         end
         
         if self.iterhook then
-           self.iterhook(self.parts)
+           self.iterhook(self.parts, iter)
         end 
 
         iter = iter + 1
