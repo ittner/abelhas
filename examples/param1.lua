@@ -1,9 +1,8 @@
 --
--- Maximizes the function:  sin(x^2 + y^2) / (x^2 + y^2)
+-- Maximizes the function:  cos(x^2 + y^2) - x^2/5 - y^2/5 
 -- Search space: -3.0 -- 3.0
--- Max fitness: 1.0
 --
--- \frac {\sin \left(x^2 + y^2\right)} {\left(x^2 + y^2\right)}
+-- \cos \left(x^2 + y^2\right) - \frac{x^2}{5} - \frac{y^2}{5}
 --
 --
 -- This function converges quickly to a near-best and slowy to the best.
@@ -12,20 +11,24 @@
 
 require "pso"
 
-local swarm = pso.new(2)
+math.randomseed(os.time())      -- Seeds the pseudo-random number generator
+
+local swarm = pso.new(2)        -- Creates a new swarm with 2 dimensions
 swarm:setLimits(-3.0, 3.0)      -- Search space
 swarm:setParticles(10)          -- 10 particles
-swarm:setC1(1.0)                -- Cognitive factor
+swarm:setC1(1.5)                -- Cognitive factor
 swarm:setC2(2.0)                -- Social factor
 swarm:setMaxSpeed(1.0)          -- Maximum speed
 swarm:setReplacementProb(0.05)  -- 5% of the particles die each iteration
-swarm:setMaxFitness(1.0)        -- Stops when the exact solution is found
-swarm:setMaxStagnation(100)     -- Surrenders after fight so much...
+swarm:setPrecision(6)           -- Maximum precision of 6 decimal places
+swarm:setFitnessRounding(6)     -- Rounds up the fitness to 6 places
+swarm:setMaxFitness(1.0)        -- Stops when the maximum fitness is reached
+swarm:setMaxStagnation(20)      -- Stops if stalled for 20 generations
 
 swarm:setFitnessFunction(function (x, y)
-    return math.sin(x^2 + y^2)/(x^2 + y^2)
+    return math.cos(x^2 + y^2) - x^2/5 - y^2/5
 end)
 
 local ret, fit, reason, iter = swarm:run()
-print("Done", ret[1], ret[1], fit, reason, iter)
+print("Done", ret[1], ret[2], fit, reason, iter)
 
