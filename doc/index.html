@@ -153,7 +153,7 @@ pre.wrong
 
 <p> The solver may be seen as being a multi-dimensional solution space, where each dimension gives the value of one variable from the problem. The problem is initialized by randomly placing some number of "particles" (candidate solutions) in this search space. Each particle are ranked with a fitness function and will remember is own best position ("pbest") on the search space and will be able to "see" the best particle in the swarm ("gbest") and accelerate itself towards an intermediate position between its own best position and the position of the best particle in the swarm. This step is repeated for each particle in the swarm until some termination criteria is met (maximum fitness reached, maximum number of iterations or too many iterations without any improvement in the fitness of the best particle of the swarm). When this criterion is met, it is said that the problem converged to a solution. </p>
 
-<p> In order to get the algorithm to work, several parameters must be supplied: 
+<p> In order to get the algorithm to work, several parameters must be supplied:</p>
 <ul>
  <li> The <b>number of dimensions</b> of the problem;  each dimension is a variable to be optimized. </li>
  
@@ -172,11 +172,10 @@ pre.wrong
  <li> The <b>termination criteria</b>, that says when the algorithm will stop and give the solution; This may be the maximum fitness to be reached, the maximum number of iterations or the maximum stagnation (number of iterations without any improvement on the fitness of the best particle of the swarm). </li>
 </ul>
 
-More information are available in the section related to the <a href="#api">Abelhas API</a>.
-</p>
+<p>More information are available in the section related to the <a href="#api">Abelhas API</a>.</p>
 
 
-<p> There are several references to PSO in the literature that may provide a good understanding of theses concepts. Follows a small selection:
+<p> There are several references to PSO in the literature that may provide a good understanding of theses concepts. Follows a small selection:</p>
 
 <ul>
 
@@ -187,14 +186,12 @@ More information are available in the section related to the <a href="#api">Abel
 
  <li>M. Clerc. <i>Particle Swarm Optimization.</i> ISTE, 2006.</li>
 
- <li>A. P. Engelbrecht. <a href="http://si.cs.up.ac.za/"><i>Fundamentals of Computational Swarm Intelligence</i></a>. Wiley, 2005.</a></li>
+ <li>A. P. Engelbrecht. <a href="http://si.cs.up.ac.za/"><i>Fundamentals of Computational Swarm Intelligence</i></a>. Wiley, 2005.</li>
 
  <li>M. Clerc, and J. Kennedy, <i>The Particle Swarm-Explosion, Stability, and Convergence in a Multidimensional Complex Space</i>, IEEE Transactions on Evolutionary Computation, 2002, 6, 58-73</li>
 
  <li>J. Kennedy, and R. Eberhart, <i>Particle swarm optimization</i>, in Proc. of the IEEE Int. Conf. on Neural Networks, Piscataway, NJ, pp. 1942–1948, 1995.</li>
 </ul>
-
-</p>
 
 
 
@@ -414,14 +411,14 @@ will receive the position of the dead particle, an per dimension. Passing
 <p> Sets a function to be called for each iteration of the optimizer. The
 function will receive a array of particles as first argument and the
 number of the current iteration as second argument.  Each particle in
-the particle array is a table with the following fields:
+the particle array is a table with the following fields: </p>
 <pre>
   fit  the fitness value for the best position (number);
   x    particle's position in the n-dimensional space (array of numbers);
   b    particle's best position (array of numbers);
   v    particle's velocity (array of numbers).
 </pre>
-these values may be read, but SHOULD NOT be changed or redefined.
+<p> these values may be read, but SHOULD NOT be changed or redefined.
 Passing 'nil' disables this feature. </p>
 
 <p> Warning: Abuse of this feature may slow the algorithm down! </p>
