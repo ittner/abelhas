@@ -1,0 +1,488 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+ <head>
+  <title>Abelhas Reference Manual</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <style type="text/css"><!--
+h1 {
+    font-family: Verdana, Arial, helvetica, sans-serif;
+    font-size: 18px;
+    color: #000000;
+    background-color: #FFFFFF;
+    text-align: center;
+}    
+
+h2 {
+    font-family: Verdana, Arial, helvetica, sans-serif;
+    font-size: 16px;
+    color: #000000;
+    background-color: #EAEAEA;
+}    
+
+h3 {
+    font-family: Verdana, Arial, helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+    color: #000000;
+}    
+
+h4 {
+    font-family: Verdana, Arial, helvetica, sans-serif;
+    font-size: 12px;
+    color: #000000;
+}    
+
+body  {
+    font-family: Verdana, Arial, helvetica, sans-serif;
+    font-size: 12px;
+    color: #000000;
+    background: #FFFFFF;
+}
+
+a {
+    font-family: Verdana, Arial, helvetica, sans-serif;
+    font-size: 12px;
+    color: #000088;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #FF0000;
+    background-color: #EAEAEA;
+}
+
+hr {
+    border: 1px solid #EAEAEA;
+}
+
+table {
+    border: 0px;
+}
+
+tr, td {
+    font-family: Verdana, Arial, helvetica, sans-serif;
+    font-size: 12px;
+    border: 1px solid #EAEAEA;
+    background-color: #FFFFFF;
+    padding: 0px;
+    cell-spacing: 1px;
+}
+
+tr.h, td.h {
+    text-align: center;
+    font-weight: bold;
+}
+
+tr.i, td.i {
+    text-align: center;
+}
+
+tr.n, td.n {
+    font-size: 12px;
+    font-family: "Courier New", courier, monospace;
+}
+
+pre
+{
+    font-family: "Courier New", courier, monospace;
+    color: black;
+}
+
+pre.example
+{
+    border: 1px solid rgb(128, 128, 128);
+    padding: 5pt;
+    display: block;
+    font-family: "Courier New", courier, monospace;
+    background-color: #F0F0F0;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+pre.example2
+{
+    border: 1px solid rgb(128, 128, 128);
+    padding: 5pt;
+    display: block;
+    font-family: "Courier New", courier, monospace;
+    background-color: #F0F0F0;
+}
+
+pre.wrong
+{
+    border: gray 1pt solid;
+    padding: 2pt;
+    display: block;
+    font-family: "Courier New", courier, monospace;
+    background-color: #FF0000;
+    color: black;
+}
+
+--></style>
+</head>
+
+
+<body>
+<center>
+ <a href="http://abelhas.luaforge.net">
+  <img src="luapso.png" alt="Abelhas Logo" title="Abelhas logo" width="140" height="140" border="0">
+ </a>
+ <h1>Abelhas 1.0</h1>
+</center>
+
+<h2> Contents </h2>
+<ul>
+ <li><a href="#intro">Introduction</a>
+ <li><a href="#license">Licensing information</a></li>
+ <li><a href="#download">Download, installation and initialization</a></li>
+ <li><a href="#api">API</a></li>
+ <li><a href="#examples">Examples</a></li>
+ <li><a href="#contact">Contact information</a></li>
+</ul>
+
+
+
+<a name="intro"></a>
+<h2>Introduction</h2>
+
+<p> Abelhas (aka Lua PSO) is a Lua library for particle swarm optimization (PSO), a population-based optimization algorithm inspired by the social behavior of some species, like fishes and birds, and used for solving a multitude of numeric problems with linear and discrete search spaces. The first particle swarm optimization algorithm was invented by Dr. James Kennedy and Russell Eberhart, in 1995, and since then several versions and variants have been created. Abelhas is one of them. </p>
+
+<p> For people familiarized with particle swarms, Abelhas is a particle swarm optimizer that uses global neighborhood, speed limits and particle replacement. It does not have the concept of inertia. </p>
+
+<p> The solver may be seen as being a multi-dimensional solution space, where each dimension gives the value of one variable from the problem. The problem is initialized by randomly placing some number of "particles" (candidate solutions) in this search space. Each particle are ranked with a fitness function and will remember is own best position ("pbest") on the search space and will be able to "see" the best particle in the swarm ("gbest") and accelerate itself towards an intermediate position between its own best position and the position of the best particle in the swarm. This step is repeated for each particle in the swarm until some termination criteria is met (maximum fitness reached, maximum number of iterations or too many iterations without any improvement in the fitness of the best particle of the swarm). When this criterion is met, it is said that the problem converged to a solution. </p>
+
+<p> In order to get the algorithm to work, several parameters must be supplied:</p>
+<ul>
+ <li> The <b>number of dimensions</b> of the problem;  each dimension is a variable to be optimized. </li>
+ 
+ <li> The <b>fitness function</b>, a function that receives the variables from the solver and evaluates them, giving a <b>fitness value</b>;  Higher values means better solutions. </li>
+
+ <li> The <b>number of particles</b> used in the swarm. </li>
+
+ <li> The <b>limits</b> of each dimension; or, the maximum and minimum values that may be given to that variable. </li>
+ 
+ <li> The <b>cognitive and social factors</b> (c1 and c2) that says how much a particle will trust itself and how much it will trust in the swarm. </li>
+ 
+ <li> The <b>maximum speed</b> allowed for each dimension; This parameter tries to avoid the premature convergence of the particles to a local optimum. </li>
+ 
+ <li> The <b>replacement probability</b>; that may save the solver from getting stuck in a local optimum by replacing a particle by a random one. </li>
+ 
+ <li> The <b>termination criteria</b>, that says when the algorithm will stop and give the solution; This may be the maximum fitness to be reached, the maximum number of iterations or the maximum stagnation (number of iterations without any improvement on the fitness of the best particle of the swarm). </li>
+</ul>
+
+<p>More information are available in the section related to the <a href="#api">Abelhas API</a>.</p>
+
+
+<p> There are several references to PSO in the literature that may provide a good understanding of theses concepts. Follows a small selection:</p>
+
+<ul>
+
+ <li>X. Hu. <a href="http://www.swarmintelligence.org/"><i>Swarm Intelligence</i></a>, 2007.</li>
+
+
+ <li>J. Kennedy and R. C. Eberhart. <i>Swarm Intelligence.</i> Morgan Kaufmann. 2001.</li>
+
+ <li>M. Clerc. <i>Particle Swarm Optimization.</i> ISTE, 2006.</li>
+
+ <li>A. P. Engelbrecht. <a href="http://si.cs.up.ac.za/"><i>Fundamentals of Computational Swarm Intelligence</i></a>. Wiley, 2005.</li>
+
+ <li>M. Clerc, and J. Kennedy, <i>The Particle Swarm-Explosion, Stability, and Convergence in a Multidimensional Complex Space</i>, IEEE Transactions on Evolutionary Computation, 2002, 6, 58-73</li>
+
+ <li>J. Kennedy, and R. Eberhart, <i>Particle swarm optimization</i>, in Proc. of the IEEE Int. Conf. on Neural Networks, Piscataway, NJ, pp. 1942–1948, 1995.</li>
+</ul>
+
+
+
+<a name="license"></a>
+<h2>Licensing information</h2>
+
+<p> Abelhas is <em>copyrighted free software</em> distributed under the same
+license that Lua 5.1, so, if you can use Lua in your application, you can
+use Abelhas too. The full license text follows: </p>
+
+
+<blockquote>
+<pre>
+Abelhas (c) 2007 Alexandre Erwin Ittner
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHOR OR COPYRIGHT HOLDER BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+If you use this package in a product, an acknowledgment in the product
+documentation would be greatly appreciated (but it is not required).
+</pre>
+</blockquote>
+
+
+
+<a name="download"></a>
+<h2>Download, installation and initialization</h2>
+
+<p> Abelhas is a pure-Lua library and can be downloaded from the
+<a href="http://luaforge.net/projects/abelhas/">Abelhas project
+page</a> on <a href="http://www.luaforge.net">LuaForge</a>. After
+downloading, just unpack the distribution package and copy the file
+<code>pso.lua</code> to the Lua packages directory in your system. </p>
+
+<p>Abelhas uses the Lua 5.1 package system that allows you to simply do a</p>
+<pre class="example">require "pso"</pre>
+<p> call to load up the library. </p>
+
+
+
+
+
+<a name="api"></a>
+<h2>API</h2>
+
+
+<h3>pso.VERSION</h3>
+<p> This constant keeps a string with the version of the library. </p>
+
+
+<h3>pso.TERM_CONVERGED</h3>
+<h3>pso.TERM_MAX_ITERATIONS</h3>
+<h3>pso.TERM_MAX_STAGNATION</h3>
+<p> Theses constants keeps reasons for the termination of the algorithm,
+returned by the method 'run'.</p>
+
+
+<h3>pso.new(dimensions)</h3>
+
+<p> Constructor. Returns a new swarm with the given number of dimensions. </p>
+
+
+<h3>sw:setPrecision(decs)</h3>
+<p> Sets the precision for all dimensions (in number of decimal places). 
+'nil' disables this feature and allows the values to assume the maximum
+precision allowed by the Lua numbers. </p>
+
+
+<h3>sw:setPrecisionDim(dim, decs)</h3>
+<p> Sets the precision for the dimension 'dim', for 'decs' decimal places.
+'nil' disables this feature and allows the values to assume the maximum
+precision allowed by the Lua numbers. </p>
+
+
+<h3>sw:getPrecisionDim(dim)</h3>
+<p> Returns the precision for the dimension 'dim', as the number of decimal
+places. </p>
+
+
+<h3>sw:setC1(c)</h3>
+<p> Sets the cognitive factor (number, 0 or greater). </p>
+
+
+<h3>sw:getC1()</h3>
+<p> Returns the cognitive factor (number, 0 or greater). </p>
+
+
+<h3>sw:setC2(c)</h3>
+<p> Sets the social factor (number, 0 or greater). </p>
+
+
+<h3>sw:getC2()</h3>
+<p> Returns the social factor (number, 0 or greater). </p>
+
+
+<h3>sw:setMaxSpeedDim(dimension, speed)</h3>
+<p> Sets the maximum speed for a particle in the given dimension.  </p>
+
+
+<h3>sw:getMaxSpeed(dimension, speed)</h3>
+<p> Returns the maximum speed for a particle in the given dimension. </p>
+
+
+<h3>sw:setMaxSpeed(speed)</h3>
+<p> Sets the maximum speed for all dimensions. </p>
+
+
+<h3>sw:setReplacementProb(prob)</h3>
+<p> Sets the probability of a particle being replaced by another, randomly
+generated, one. This feature tries to avoid local optima by the simulation
+of the death and replacement of a particle. The probability must be a
+number between 0 and 1. The best particle in the swarm is never replaced. </p>
+
+
+<h3>sw:getReplacementProb(prob)</h3>
+<p> Gets the probability of a particle being replaced by another. </p>
+
+
+<h3>sw:setParticles(number)</h3>
+<p> Sets the number of particles. </p>
+
+
+<h3>sw:getParticles()</h3>
+<p> Returns the number of particles. </p>
+
+
+<h3>sw:setFitnessFunction(function (...)  ... end)</h3>
+<p> Sets the fitness function. The particle position will be passed as an
+argument for each dimension.  The fitness function must return the
+fitness of the given particle as a number with higher values for better
+solutions. </p>
+
+
+<h3>sw:setLimitsDim(dimension, min, max)</h3>
+<p> Sets the limits for the given dimension. </p>
+
+
+<h3>sw:getLimitsDim(dimension)</h3>
+<p> Returns the minimum and maximum values for the given dimension. </p>
+
+
+<h3>sw:setLimits(min, max)</h3>
+<p> Sets the limits for all dimensions. </p>
+
+
+<h3>sw:setFitnessRounding(decs)</h3>
+<p> Makes the solver round up the fitness to 'decs' decimal places. The value
+must be a positive integer or 'nil' to disable this feature. </p>
+
+
+<h3>sw:getFitnessRounding()</h3>
+<p> Returns the number of decimal places used to round up the fitness values,
+or 'nil' if this feature is not used. </p>
+
+
+<h3>sw:setMaxFitness(maxf)</h3>
+<p> Sets the maximum fitness as a termination criterium. Fitness must be a
+number or 'nil' to disable its use as termination criterium.
+
+
+<h3>sw:getMaxFitness()</h3>
+<p> Returns the maximum fitness, or 'nil' if it is not used as termination
+criteria. </p>
+
+
+<h3>sw:setMaxIterations(maxi)</h3>
+<p> Sets the maximum number of iterations as a termination criterium. This
+must be a integer greater than zero or 'nil' to disable its use as
+termination criterium. </p>
+
+
+<h3>sw:getMaxIterations()</h3>
+<p> Returns the maximum number of iterations, or 'nil' if it is not used as
+termination criteria. </p>
+
+
+<h3>sw:setMaxStagnation(maxs)</h3>
+<p> Sets the maximum number of stagnated iterations as a termination
+criterium. This must be a integer greater than zero or 'nil' to disable
+its use as termination criterium. </p>
+
+
+<h3>sw:getMaxStagnation()</h3>
+<p> Returns the maximum number of stagnated iterations, or 'nil' if it is not
+used as termination criteria. </p>
+
+
+<h3>sw:setNewBestHook(function(...) end)</h3>
+<p> Sets a function to be called when a new best particle if found. The
+function will receive the particle position, an per dimension. Passing
+'nil' disables this feature. </p>
+
+
+<h3>sw:setReplacementHook(function(...) end)</h3>
+<p> Sets a function to be called when a particle is replaced. The function
+will receive the position of the dead particle, an per dimension. Passing
+'nil' disables this feature. </p>
+
+
+<h3>sw:setIterationHook(function(parts, iter) ... end)</h3>
+<p> Sets a function to be called for each iteration of the optimizer. The
+function will receive a array of particles as first argument and the
+number of the current iteration as second argument.  Each particle in
+the particle array is a table with the following fields: </p>
+<pre>
+  fit  the fitness value for the best position (number);
+  x    particle's position in the n-dimensional space (array of numbers);
+  b    particle's best position (array of numbers);
+  v    particle's velocity (array of numbers).
+</pre>
+<p> these values may be read, but SHOULD NOT be changed or redefined.
+Passing 'nil' disables this feature. </p>
+
+<p> Warning: Abuse of this feature may slow the algorithm down! </p>
+
+
+<h3>sw:run()</h3>
+<p> Runs the algorithm and returns a array with the position of the particle,
+the fitness, the reason of termination (pso.TERM_CONVERGED,
+pso.TERM_MAX_ITERATIONS, or pso.TERM_MAX_STAGNATION) and the total of
+iterations. </p>
+
+
+
+<a name="examples"></a>
+<h2>Examples</h2>
+
+<p> There are several samples in the "<code>examples</code>" directory within the distribution package. Follows a example intended to optimize the function <img src="f1.png" alt="cos(x²+y²) - x²/5 - y²/5" width="141" height="21" border="0">:
+
+<pre class="example">
+require "pso"
+
+math.randomseed(os.time())      -- Seeds the pseudo-random number generator
+
+local swarm = pso.new(2)        -- Creates a new swarm with 2 dimensions
+swarm:setLimits(-3.0, 3.0)      -- Search space
+swarm:setParticles(10)          -- 10 particles
+swarm:setC1(1.5)                -- Cognitive factor
+swarm:setC2(2.0)                -- Social factor
+swarm:setMaxSpeed(1.0)          -- Maximum speed
+swarm:setReplacementProb(0.05)  -- 5% of the particles die each iteration
+swarm:setPrecision(6)           -- Maximum precision of 6 decimal places
+swarm:setFitnessRounding(6)     -- Rounds up the fitness to 6 places
+swarm:setMaxFitness(1.0)        -- Stops when the maximum fitness is reached
+swarm:setMaxStagnation(20)      -- Stops if stalled for 20 generations
+
+swarm:setFitnessFunction(function (x, y)
+    return math.cos(x^2 + y^2) - x^2/5 - y^2/5
+end)
+
+local ret, fit, reason, iter = swarm:run()
+print("Done", ret[1], ret[2], fit, reason, iter)
+</pre>
+
+
+
+
+<a name="contact"></a>
+<h2>Contact information</h2>
+
+<p>
+Author: <b>Alexandre Erwin Ittner</b>
+<br> E-mail: <a href="mailto:aittner#gmail.com">aittner<b>#</b>gmail.com</a>
+(e-mail obfuscated to avoid spam-bots. Please replace the "#" with an "@").
+
+<br> GnuPG/PGP Key: <a href="http://users.netuno.com.br/aittner/AlexandreErwinIttner.pub.asc">0x0041A1FB</a>
+ (key fingerprint: <code>9B49 FCE2 E6B9 D1AD 6101  29AD 4F6D F114 0041 A1FB</code>).
+<br> Homepage: <a href="http://users.netuno.com.br/aittner/">http://users.netuno.com.br/aittner/</a>.
+<br> Location: Jaraguá do Sul, Santa Catarina, Brazil.
+</p>
+
+
+</body>
+</html>
+
+
+
+
