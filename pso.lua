@@ -1,5 +1,5 @@
 --- PSO - A Lua module for particle swarm optmization.
---- (c) 2007 Alexandre Erwin Ittner <aittner@netuno.com.br>
+--- (c) 2005-2011 Alexandre Erwin Ittner <alexandre@ittner.com.br>
 ---
 ---
 --- Permission is hereby granted, free of charge, to any person obtaining

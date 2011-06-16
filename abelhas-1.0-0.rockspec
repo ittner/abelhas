@@ -14,7 +14,7 @@ For people familiarized with particle swarms, Abelhas is a particle swarm optimi
 ]],
   license = "MIT/X11",
   homepage = "http://abelhas.luaforge.net/",
-  maintainer = "Alexandre Erwin Ittner <aittner@gmail.com>"
+  maintainer = "Alexandre Erwin Ittner <alexandre@ittner.com.br>"
 }
 
 dependencies = {
