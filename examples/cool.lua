@@ -6,7 +6,7 @@
 -- inspired by the weasel example by Richard Dawkins in The Blind Watchmaker.
 --
 
-require "pso"
+local pso = require("pso")
 
 local str = "Lua is cool!"                      -- The string
 -- local str = "As I said before, Lua is cool!" -- A harder example (248 bits)

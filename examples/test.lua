@@ -2,7 +2,7 @@
 -- Minimizes |x-200| + |y-200|
 -- Search space: -5000 to +5000
 
-require "pso"
+local pso = require("pso")
 
 math.randomseed(os.time())
 

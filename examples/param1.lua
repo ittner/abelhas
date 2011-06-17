@@ -9,7 +9,7 @@
 -- Try 'gnuplot.lua' for a plotting version.
 --
 
-require "pso"
+local pso = require("pso")
 
 math.randomseed(os.time())      -- Seeds the pseudo-random number generator
 

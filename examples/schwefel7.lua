@@ -12,7 +12,7 @@
 -- Search space: -512 to +512
 
 
-require "pso"
+local pso = require("pso")
 
 math.randomseed(os.time())
 

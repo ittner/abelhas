@@ -10,7 +10,7 @@
 -- allow a better visualization. Try 'param1.lua' for a better version.
 --
 
-require "pso"
+local pso = require("pso")
 
 math.randomseed(os.time())      -- Seeds the pseudo-random number generator
 
