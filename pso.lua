@@ -74,22 +74,24 @@ end
 
 
 -- Rounds the number 'n' to 'p' decimal places.
+local math_floor, math_ceil = math.floor, math.ceil
 local function round(n, p)
     if not p then
         return n
     end
     local m = 10.0 ^ p
-    if (m*n - math.floor(m*n)) >= 0.5 then
-        return math.ceil(m*n)/m
+    if (m*n - math_floor(m*n)) >= 0.5 then
+        return math_ceil(m*n)/m
     end
-    return math.floor(m*n)/m
+    return math_floor(m*n)/m
 end
 
 
 -- Returns the number 'b' if it is within the range [a,c]; otherwise, 
 -- returns a or c
+local math_max, math_min = math.max, math.min
 local function range(a, b, c)
-    return math.max(a, math.min(b, c))
+    return math_max(a, math_min(b, c))
 end
 
 
@@ -98,7 +100,7 @@ local function cspace(min, x, max)
     if (min <= x) and (x <= max) then
         return x
     else
-        return min + math.mod(x, max)
+        return min + (x % max)
     end
 end
 
