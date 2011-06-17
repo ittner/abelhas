@@ -27,7 +27,7 @@
 ---
 
 
-module("pso", package.seeall)
+module(..., package.seeall)
 
 VERSION = "1.0"
 
