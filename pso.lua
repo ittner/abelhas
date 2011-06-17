@@ -27,9 +27,6 @@
 ---
 
 
--- $Id$
-
-
 module("pso", package.seeall)
 
 VERSION = "1.0"
