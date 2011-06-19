@@ -1,151 +1,34 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
-<html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" >
  <head>
   <title>Abelhas Reference Manual</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <style type="text/css"><!--
-h1 {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-size: 18px;
-    color: #000000;
-    background-color: #FFFFFF;
-    text-align: center;
-}    
-
-h2 {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-size: 16px;
-    color: #000000;
-    background-color: #EAEAEA;
-}    
-
-h3 {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-weight: bold;
-    font-size: 12px;
-    color: #000000;
-}    
-
-h4 {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-size: 12px;
-    color: #000000;
-}    
-
-body  {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-size: 12px;
-    color: #000000;
-    background: #FFFFFF;
-}
-
-a {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-size: 12px;
-    color: #000088;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-    color: #FF0000;
-    background-color: #EAEAEA;
-}
-
-hr {
-    border: 1px solid #EAEAEA;
-}
-
-table {
-    border: 0px;
-}
-
-tr, td {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-size: 12px;
-    border: 1px solid #EAEAEA;
-    background-color: #FFFFFF;
-    padding: 0px;
-    cell-spacing: 1px;
-}
-
-tr.h, td.h {
-    text-align: center;
-    font-weight: bold;
-}
-
-tr.i, td.i {
-    text-align: center;
-}
-
-tr.n, td.n {
-    font-size: 12px;
-    font-family: "Courier New", courier, monospace;
-}
-
-pre
-{
-    font-family: "Courier New", courier, monospace;
-    color: black;
-}
-
-pre.example
-{
-    border: 1px solid rgb(128, 128, 128);
-    padding: 5pt;
-    display: block;
-    font-family: "Courier New", courier, monospace;
-    background-color: #F0F0F0;
-    margin-left: 2%;
-    margin-right: 2%;
-}
-
-pre.example2
-{
-    border: 1px solid rgb(128, 128, 128);
-    padding: 5pt;
-    display: block;
-    font-family: "Courier New", courier, monospace;
-    background-color: #F0F0F0;
-}
-
-pre.wrong
-{
-    border: gray 1pt solid;
-    padding: 2pt;
-    display: block;
-    font-family: "Courier New", courier, monospace;
-    background-color: #FF0000;
-    color: black;
-}
-
---></style>
+  <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+  <meta name="Language" content="en" />
+  <meta name="Author" content="Alexandre Erwin Ittner" />
+  <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
-
 <body>
-<center>
- <a href="http://abelhas.luaforge.net">
-  <img src="luapso.png" alt="Abelhas Logo" title="Abelhas logo" width="140" height="140" border="0">
- </a>
- <h1>Abelhas 1.0</h1>
-</center>
+<h1> Abelhas </h1>
 
-<h2> Contents </h2>
-<ul>
- <li><a href="#intro">Introduction</a>
- <li><a href="#license">Licensing information</a></li>
- <li><a href="#download">Download, installation and initialization</a></li>
- <li><a href="#api">API</a></li>
- <li><a href="#examples">Examples</a></li>
- <li><a href="#contact">Contact information</a></li>
-</ul>
+<div id="menu">
+ <h2> Contents </h2>
+ <ul>
+  <li><a href="#intro">Introduction</a></li>
+  <li><a href="#license">Licensing information</a></li>
+  <li><a href="#download">Download, installation and initialization</a></li>
+  <li><a href="#api">API</a></li>
+  <li><a href="#examples">Examples</a></li>
+  <li><a href="#contact">Contact information</a></li>
+ </ul>
+</div>
 
 
 
-<a name="intro"></a>
-<h2>Introduction</h2>
+<h2 id="intro">Introduction</h2>
 
 <p> Abelhas (aka Lua PSO) is a Lua library for particle swarm optimization (PSO), a population-based optimization algorithm inspired by the social behavior of some species, like fishes and birds, and used for solving a multitude of numeric problems with linear and discrete search spaces. The first particle swarm optimization algorithm was invented by Dr. James Kennedy and Russell Eberhart, in 1995, and since then several versions and variants have been created. Abelhas is one of them. </p>
 
@@ -155,21 +38,21 @@ pre.wrong
 
 <p> In order to get the algorithm to work, several parameters must be supplied:</p>
 <ul>
- <li> The <b>number of dimensions</b> of the problem;  each dimension is a variable to be optimized. </li>
+ <li> The <strong>number of dimensions</strong> of the problem;  each dimension is a variable to be optimized. </li>
  
- <li> The <b>fitness function</b>, a function that receives the variables from the solver and evaluates them, giving a <b>fitness value</b>;  Higher values means better solutions. </li>
+ <li> The <strong>fitness function</strong>, a function that receives the variables from the solver and evaluates them, giving a <strong>fitness value</strong>;  Higher values means better solutions. </li>
 
- <li> The <b>number of particles</b> used in the swarm. </li>
+ <li> The <strong>number of particles</strong> used in the swarm. </li>
 
- <li> The <b>limits</b> of each dimension; or, the maximum and minimum values that may be given to that variable. </li>
+ <li> The <strong>limits</strong> of each dimension; or, the maximum and minimum values that may be given to that variable. </li>
  
- <li> The <b>cognitive and social factors</b> (c1 and c2) that says how much a particle will trust itself and how much it will trust in the swarm. </li>
+ <li> The <strong>cognitive and social factors</strong> (c1 and c2) that says how much a particle will trust itself and how much it will trust in the swarm. </li>
  
- <li> The <b>maximum speed</b> allowed for each dimension; This parameter tries to avoid the premature convergence of the particles to a local optimum. </li>
+ <li> The <strong>maximum speed</strong> allowed for each dimension; This parameter tries to avoid the premature convergence of the particles to a local optimum. </li>
  
- <li> The <b>replacement probability</b>; that may save the solver from getting stuck in a local optimum by replacing a particle by a random one. </li>
+ <li> The <strong>replacement probability</strong>; that may save the solver from getting stuck in a local optimum by replacing a particle by a random one. </li>
  
- <li> The <b>termination criteria</b>, that says when the algorithm will stop and give the solution; This may be the maximum fitness to be reached, the maximum number of iterations or the maximum stagnation (number of iterations without any improvement on the fitness of the best particle of the swarm). </li>
+ <li> The <strong>termination criteria</strong>, that says when the algorithm will stop and give the solution; This may be the maximum fitness to be reached, the maximum number of iterations or the maximum stagnation (number of iterations without any improvement on the fitness of the best particle of the swarm). </li>
 </ul>
 
 <p>More information are available in the section related to the <a href="#api">Abelhas API</a>.</p>
@@ -179,24 +62,23 @@ pre.wrong
 
 <ul>
 
- <li>X. Hu. <a href="http://www.swarmintelligence.org/"><i>Swarm Intelligence</i></a>, 2007.</li>
+ <li>X. Hu. <a href="http://www.swarmintelligence.org/"><em>Swarm Intelligence</em></a>, 2007.</li>
 
 
- <li>J. Kennedy and R. C. Eberhart. <i>Swarm Intelligence.</i> Morgan Kaufmann. 2001.</li>
+ <li>J. Kennedy and R. C. Eberhart. <em>Swarm Intelligence.</em> Morgan Kaufmann. 2001.</li>
 
- <li>M. Clerc. <i>Particle Swarm Optimization.</i> ISTE, 2006.</li>
+ <li>M. Clerc. <em>Particle Swarm Optimization.</em> ISTE, 2006.</li>
 
- <li>A. P. Engelbrecht. <a href="http://si.cs.up.ac.za/"><i>Fundamentals of Computational Swarm Intelligence</i></a>. Wiley, 2005.</li>
+ <li>A. P. Engelbrecht. <a href="http://si.cs.up.ac.za/"><em>Fundamentals of Computational Swarm Intelligence</em></a>. Wiley, 2005.</li>
 
- <li>M. Clerc, and J. Kennedy, <i>The Particle Swarm-Explosion, Stability, and Convergence in a Multidimensional Complex Space</i>, IEEE Transactions on Evolutionary Computation, 2002, 6, 58-73</li>
+ <li>M. Clerc, and J. Kennedy, <em>The Particle Swarm-Explosion, Stability, and Convergence in a Multidimensional Complex Space</em>, IEEE Transactions on Evolutionary Computation, 2002, 6, 58-73</li>
 
- <li>J. Kennedy, and R. Eberhart, <i>Particle swarm optimization</i>, in Proc. of the IEEE Int. Conf. on Neural Networks, Piscataway, NJ, pp. 1942–1948, 1995.</li>
+ <li>J. Kennedy, and R. Eberhart, <em>Particle swarm optimization</em>, in Proc. of the IEEE Int. Conf. on Neural Networks, Piscataway, NJ, pp. 1942–1948, 1995.</li>
 </ul>
 
 
 
-<a name="license"></a>
-<h2>Licensing information</h2>
+<h2 id="license">Licensing information</h2>
 
 <p> Abelhas is <em>copyrighted free software</em> distributed under the same
 license that Lua 5.1, so, if you can use Lua in your application, you can
@@ -205,7 +87,7 @@ use Abelhas too. The full license text follows: </p>
 
 <blockquote>
 <pre>
-Abelhas (c) 2007 Alexandre Erwin Ittner
+Abelhas (c) 2005-2011 Alexandre Erwin Ittner
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -233,8 +115,7 @@ documentation would be greatly appreciated (but it is not required).
 
 
 
-<a name="download"></a>
-<h2>Download, installation and initialization</h2>
+<h2 id="download">Download, installation and initialization</h2>
 
 <p> Abelhas is a pure-Lua library and can be downloaded from the
 <a href="http://luaforge.net/projects/abelhas/">Abelhas project
@@ -243,15 +124,14 @@ downloading, just unpack the distribution package and copy the file
 <code>pso.lua</code> to the Lua packages directory in your system. </p>
 
 <p>Abelhas uses the Lua 5.1 package system that allows you to simply do a</p>
-<pre class="example">require "pso"</pre>
+<pre class="example">local pso = require("pso")</pre>
 <p> call to load up the library. </p>
 
 
 
 
 
-<a name="api"></a>
-<h2>API</h2>
+<h2 id="api">API</h2>
 
 
 <h3>pso.VERSION</h3>
@@ -261,7 +141,7 @@ downloading, just unpack the distribution package and copy the file
 <h3>pso.TERM_CONVERGED</h3>
 <h3>pso.TERM_MAX_ITERATIONS</h3>
 <h3>pso.TERM_MAX_STAGNATION</h3>
-<p> Theses constants keeps reasons for the termination of the algorithm,
+<p> These constants keeps reasons for the termination of the algorithm,
 returned by the method 'run'.</p>
 
 
@@ -365,7 +245,7 @@ or 'nil' if this feature is not used. </p>
 
 <h3>sw:setMaxFitness(maxf)</h3>
 <p> Sets the maximum fitness as a termination criterium. Fitness must be a
-number or 'nil' to disable its use as termination criterium.
+number or 'nil' to disable its use as termination criterium.</p>
 
 
 <h3>sw:getMaxFitness()</h3>
@@ -432,13 +312,12 @@ iterations. </p>
 
 
 
-<a name="examples"></a>
-<h2>Examples</h2>
+<h2 id="examples">Examples</h2>
 
-<p> There are several samples in the "<code>examples</code>" directory within the distribution package. Follows a example intended to optimize the function <img src="f1.png" alt="cos(x²+y²) - x²/5 - y²/5" width="141" height="21" border="0">:
+<p> There are several samples in the "<code>examples</code>" directory within the distribution package. Follows a example intended to optimize the function <img src="f1.png" alt="cos(x²+y²) - x²/5 - y²/5" width="141" height="21" />: </p>
 
 <pre class="example">
-require "pso"
+local pso = require("pso")
 
 math.randomseed(os.time())      -- Seeds the pseudo-random number generator
 
@@ -465,20 +344,21 @@ print("Done", ret[1], ret[2], fit, reason, iter)
 
 
 
-<a name="contact"></a>
-<h2>Contact information</h2>
+<h2 id="contact">Contact information</h2>
 
-<p>
-Author: <b>Alexandre Erwin Ittner</b>
-<br> E-mail: <a href="mailto:aittner#gmail.com">aittner<b>#</b>gmail.com</a>
-(e-mail obfuscated to avoid spam-bots. Please replace the "#" with an "@").
+<dl class="prop-list">
+ <dt>Author:</dt>
+ <dd>Alexandre Erwin Ittner</dd>
 
-<br> GnuPG/PGP Key: <a href="http://users.netuno.com.br/aittner/AlexandreErwinIttner.pub.asc">0x0041A1FB</a>
- (key fingerprint: <code>9B49 FCE2 E6B9 D1AD 6101  29AD 4F6D F114 0041 A1FB</code>).
-<br> Homepage: <a href="http://users.netuno.com.br/aittner/">http://users.netuno.com.br/aittner/</a>.
-<br> Location: Jaraguá do Sul, Santa Catarina, Brazil.
-</p>
+ <dt>E-mail:</dt>
+ <dd><a href="mailto:alexandre#ittner.com.br">alexandre<strong>#</strong>ittner.com.br</a> (e-mail obfuscated to avoid spam-bots. Please replace the "#" with an "@")</dd>
 
+ <dt>PGP Key:</dt>
+ <dd><a href="http://www.ittner.com.br/AlexandreErwinIttner.pub.asc">0x0041A1FB</a> (key fingerprint: <code>9B49 FCE2 E6B9 D1AD 6101  29AD 4F6D F114 0041 A1FB</code>)</dd>
+
+ <dt>Homepage:</dt>
+ <dd><a href="http://www.ittner.com.br/">http://www.ittner.com.br/</a></dd>
+</dl>
 
 </body>
 </html>

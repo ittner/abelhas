@@ -1,160 +1,42 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" >
  <head>
-  <title>Abelhas - Lua Particle Swarm Optimization</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <style type="text/css"><!--
-h1 {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-size: 18px;
-    color: #000000;
-    background-color: #FFFFFF;
-    text-align: center;
-}    
-
-h2 {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-size: 16px;
-    color: #000000;
-    background-color: #EAEAEA;
-}    
-
-h3 {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-weight: bold;
-    font-size: 12px;
-    color: #000000;
-}    
-
-h4 {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-size: 12px;
-    color: #000000;
-}    
-
-body  {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-size: 12px;
-    color: #000000;
-    background: #FFFFFF;
-}
-
-a {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-size: 12px;
-    color: #000088;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-    color: #FF0000;
-    background-color: #EAEAEA;
-}
-
-hr {
-    border: 1px solid #EAEAEA;
-}
-
-table {
-    border: 0px;
-}
-
-tr, td {
-    font-family: Verdana, Arial, helvetica, sans-serif;
-    font-size: 12px;
-    border: 1px solid #EAEAEA;
-    background-color: #FFFFFF;
-    padding: 0px;
-    cell-spacing: 1px;
-}
-
-tr.h, td.h {
-    text-align: center;
-    font-weight: bold;
-}
-
-tr.i, td.i {
-    text-align: center;
-}
-
-tr.n, td.n {
-    font-size: 12px;
-    font-family: "Courier New", courier, monospace;
-}
-
-pre
-{
-    font-family: "Courier New", courier, monospace;
-    color: black;
-}
-
-pre.example
-{
-    border: 1px solid rgb(128, 128, 128);
-    padding: 5pt;
-    display: block;
-    font-family: "Courier New", courier, monospace;
-    background-color: #F0F0F0;
-    margin-left: 2%;
-    margin-right: 2%;
-}
-
-pre.example2
-{
-    border: 1px solid rgb(128, 128, 128);
-    padding: 5pt;
-    display: block;
-    font-family: "Courier New", courier, monospace;
-    background-color: #F0F0F0;
-}
-
-pre.wrong
-{
-    border: gray 1pt solid;
-    padding: 2pt;
-    display: block;
-    font-family: "Courier New", courier, monospace;
-    background-color: #FF0000;
-    color: black;
-}
-
---></style>
+  <title>Abelhas - Particle Swarm Optimization in Lua</title>
+  <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+  <meta name="Language" content="en" />
+  <meta name="Author" content="Alexandre Erwin Ittner" />
+  <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
-
 <body>
-<center>
- <a href="http://abelhas.luaforge.net">
-  <img src="luapso.png" alt="Abelhas Logo" title="Abelhas logo" width="140" height="140" border="0">
- </a>
- <h1>Abelhas</h1>
 
- <a href="#intro">Overview</a> |
- <a href="#history">History</a> |
- <a href="#license">Licensing</a> |
- <a href="#download">Download</a> |
- <a href="manual.html">Reference manual</a> |
- <a href="#author">Contacting the author</a>
-</center>
+<h1> Abelhas </h1>
 
+<div id="menu">
+ <h2> Contents </h2>
+ <ul>
+  <li><a href="#intro">Overview</a></li>
+  <li><a href="#history">History</a></li>
+  <li><a href="#license">Licensing</a></li>
+  <li><a href="#download">Download</a></li>
+  <li><a href="manual.html">Reference manual</a></li>
+  <li><a href="#contact">Contact information</a></li>
+ </ul>
+</div>
 
-<a name="intro"></a>
-<h2>Overview</h2>
+<h2 id="intro">Overview</h2>
 
 <p> Abelhas (aka Lua PSO) is a Lua library for particle swarm optimization (PSO), a population-based optimization algorithm inspired by the social behavior of some species, like fishes and birds, and used for solving a multitude of numeric problems with linear and discrete search spaces. The first particle swarm optimization algorithm was invented by Dr. James Kennedy and Russell Eberhart, in 1995, and since then several versions and variants have been created. Abelhas is one of them. </p>
 
 <p> For people familiarized with particle swarms, Abelhas is a particle swarm optimizer that uses global neighborhood, speed limits and particle replacement. It does not have the concept of inertia. </p>
 
-<center>
-  <img src="particles.gif" alt="" width="400" height="300" border="0">
-</center>
+<p><img class="centered" src="particles.gif" alt="Animation showing particles converging to a maximum" width="400" height="300" /></p>
 
 
 
-<a name="history"></a>
-<h2>History</h2>
+<h2 id="history">History</h2>
 
 <ul>
   <li>2007-10-13 - abelhas-1.0 (Lua 5.1) (first public release)</li>
@@ -162,8 +44,7 @@ pre.wrong
 
 
 
-<a name="license"></a>
-<h2>Licensing information</h2>
+<h2 id="license">Licensing information</h2>
 
 <p> Abelhas is <em>copyrighted free software</em> distributed under the same
 license that Lua 5.1, so, if you can use Lua in your application, you can
@@ -171,7 +52,7 @@ use Abelhas too. The full license text follows: </p>
 
 <blockquote>
 <pre>
-Abelhas (c) 2007 Alexandre Erwin Ittner
+Abelhas (c) 2005-2011 Alexandre Erwin Ittner
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -201,8 +82,7 @@ documentation would be greatly appreciated (but it is not required).
 
 
 
-<a name="download"></a>
-<h2>Download</h2>
+<h2 id="download">Download</h2>
 
 <p> Abelhas is a pure-Lua library and can be downloaded from the
 <a href="http://luaforge.net/projects/abelhas/">Abelhas project
@@ -211,20 +91,22 @@ downloading, just unpack the distribution package and copy the file
 <code>pso.lua</code> to the Lua packages directory in your system. </p>
 
 
-<a name="author"></a>
-<h2>Contacting the author</h2>
 
-<p>
-Author: <b>Alexandre Erwin Ittner</b>
-<br> E-mail: <a href="mailto:aittner#gmail.com">aittner<b>#</b>gmail.com</a>
-(e-mail obfuscated to avoid spam-bots. Please replace the "#" with an "@").
+<h2 id="contact">Contact information</h2>
 
-<br> GnuPG/PGP Key: <a href="http://users.netuno.com.br/aittner/AlexandreErwinIttner.pub.asc">0x0041A1FB</a>
- (key fingerprint: <code>9B49 FCE2 E6B9 D1AD 6101  29AD 4F6D F114 0041 A1FB</code>).
-<br> Homepage: <a href="http://users.netuno.com.br/aittner/">http://users.netuno.com.br/aittner/</a>.
-<br> Location: Jaraguá do Sul, Santa Catarina, Brazil.
-</p>
+<dl class="prop-list">
+ <dt>Author:</dt>
+ <dd>Alexandre Erwin Ittner</dd>
 
+ <dt>E-mail:</dt>
+ <dd><a href="mailto:alexandre#ittner.com.br">alexandre<strong>#</strong>ittner.com.br</a> (e-mail obfuscated to avoid spam-bots. Please replace the "#" with an "@")</dd>
+
+ <dt>PGP Key:</dt>
+ <dd><a href="http://www.ittner.com.br/AlexandreErwinIttner.pub.asc">0x0041A1FB</a> (key fingerprint: <code>9B49 FCE2 E6B9 D1AD 6101  29AD 4F6D F114 0041 A1FB</code>)</dd>
+
+ <dt>Homepage:</dt>
+ <dd><a href="http://www.ittner.com.br/">http://www.ittner.com.br/</a></dd>
+</dl>
 
 </body>
 </html>
