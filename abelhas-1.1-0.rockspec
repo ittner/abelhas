@@ -1,8 +1,8 @@
 package = "abelhas"
-version = "1.0-0"
+version = "1.1-0"
 
 source = {
-   url = "http://luaforge.net/frs/download.php/2658/abelhas-1.0.tar.gz",
+   url = "https://github.com/ittner/abelhas/download/abelhas-1.1.tar.gz",
 }
 
 description = {
@@ -13,7 +13,7 @@ Abelhas (aka Lua PSO) is a Lua library for particle swarm optimization (PSO), a 
 For people familiarized with particle swarms, Abelhas is a particle swarm optimizer that uses global neighborhood, speed limits and particle replacement. It does not have the concept of inertia.
 ]],
   license = "MIT/X11",
-  homepage = "http://abelhas.luaforge.net/",
+  homepage = "http://ittner.github.com/abelhas/",
   maintainer = "Alexandre Erwin Ittner <alexandre@ittner.com.br>"
 }
 

@@ -1,5 +1,5 @@
 --- PSO - A Lua module for particle swarm optmization.
---- (c) 2005-2011 Alexandre Erwin Ittner <alexandre@ittner.com.br>
+--- (c) 2005-2012 Alexandre Erwin Ittner <alexandre@ittner.com.br>
 --- For more information, see: http://ittner.github.com/abelhas/
 ---
 ---
@@ -31,7 +31,7 @@
 local M = { }
 local MT = { }
 
-M.VERSION = "1.0"
+M.VERSION = "1.1"
 M.TERM_CONVERGED = 1
 M.TERM_MAX_ITERATIONS = 2
 M.TERM_MAX_STAGNATION = 3
