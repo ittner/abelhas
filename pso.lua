@@ -425,7 +425,7 @@ end
 --- 'nil' disables this feature.
 ---
 function setNewBestHook(self, func)
-    if type(func) ~= "function" then
+    if func and type(func) ~= "function" then
         error("Bad function")
     end
     self.nbhook = func
@@ -440,7 +440,7 @@ end
 --- 'nil' disables this feature.
 ---
 function setReplacementHook(self, func)
-    if type(func) ~= "function" then
+    if func and type(func) ~= "function" then
         error("Bad function")
     end
     self.replhook = func
@@ -466,7 +466,7 @@ end
 --- Warning: Abuse of this feature may slow the algorithm down!
 ---
 function setIterationHook(self, func)
-    if type(func) ~= "function" then
+    if func and type(func) ~= "function" then
         error("Bad function")
     end
     self.iterhook = func
