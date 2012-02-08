@@ -28,13 +28,16 @@
 ---
 
 
-module(..., package.seeall)
+local M = { }
+local MT = { }
 
-VERSION = "1.0"
+M.VERSION = "1.0"
+M.TERM_CONVERGED = 1
+M.TERM_MAX_ITERATIONS = 2
+M.TERM_MAX_STAGNATION = 3
 
-TERM_CONVERGED = 1
-TERM_MAX_ITERATIONS = 2
-TERM_MAX_STAGNATION = 3
+local unpack = unpack or table.unpack
+
 
 
 ---
@@ -43,7 +46,7 @@ TERM_MAX_STAGNATION = 3
 --- Constructor. Returns a new swarm with the given number of dimensions.
 ---
 
-function new(dims)
+function M.new(dims)
     local sw = {
         fitfunc = nil,      -- Fitness function
         dims = dims,        -- Number of dimensions
@@ -66,7 +69,7 @@ function new(dims)
         iterhook = nil      -- Iteration hook
     }
 
-    setmetatable(sw, { __index = _M })
+    setmetatable(sw, { __index = MT })
     return sw
 end
 
@@ -116,7 +119,7 @@ end
 --- 'nil' disables this feature and allows the values to assume the maximum
 --- precision allowed by the Lua numbers.
 ---
-function setPrecision(self, decs)
+function MT.setPrecision(self, decs)
     for i = 1, self.dims do
         self:setPrecisionDim(i, decs)
     end
@@ -130,7 +133,7 @@ end
 --- 'nil' disables this feature and allows the values to assume the maximum
 --- precision allowed by the Lua numbers.
 ---
-function setPrecisionDim(self, dim, decs)
+function MT.setPrecisionDim(self, dim, decs)
     assert(not decs or decs >= 0, "Bad number of decimal places.")
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
     self.prec[dim] = decs
@@ -143,7 +146,7 @@ end
 --- Returns the precision for the dimension 'dim', as the number of decimal
 --- places.
 ---
-function getPrecisionDim(self, dim)
+function MT.getPrecisionDim(self, dim)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
     return self.prec[dim]
 end
@@ -154,7 +157,7 @@ end
 ---
 --- Sets the cognitive factor (number, 0 or greater).
 ---
-function setC1(self, c)
+function MT.setC1(self, c)
     -- assert(c >= 0 and c <= 1, "Value out of range")
     assert(c >= 0, "Value out of range")
     self.c1 = c
@@ -166,7 +169,7 @@ end
 ---
 --- Returns the cognitive factor (number, 0 or greater).
 ---
-function getC1(self)
+function MT.getC1(self)
     return self.c1
 end
 
@@ -176,7 +179,7 @@ end
 ---
 --- Sets the social factor (number, 0 or greater).
 ---
-function setC2(self, c)
+function MT.setC2(self, c)
     -- assert(c >= 0 and c <= 1, "Value out of range")
     assert(c >= 0, "Value out of range")
     self.c2 = c
@@ -188,7 +191,7 @@ end
 ---
 --- Returns the social factor (number, 0 or greater).
 ---
-function getC2(self)
+function MT.getC2(self)
     return self.c2
 end
 
@@ -198,7 +201,7 @@ end
 ---
 --- Sets the maximum speed for a particle in the given dimension
 ---
-function setMaxSpeedDim(self, dim, spd)
+function MT.setMaxSpeedDim(self, dim, spd)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
     self.maxs[dim] = spd
 end
@@ -209,7 +212,7 @@ end
 ---
 --- Returns the maximum speed for a particle in the given dimension.
 ---
-function getMaxSpeedDim(self, dim)
+function MT.getMaxSpeedDim(self, dim)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
     return self.maxs[dim]
 end
@@ -220,7 +223,7 @@ end
 ---
 --- Sets the maximum speed for all dimensions.
 ---
-function setMaxSpeed(self, spd)
+function MT.setMaxSpeed(self, spd)
     for dim = 1, self.dims do
         self:setMaxSpeedDim(dim, spd)
     end
@@ -235,7 +238,7 @@ end
 --- of the death and replacement of a particle. The probability must be a
 --- number between 0 and 1. The best particle in the swarm is never replaced.
 ---
-function setReplacementProb(self, prob)
+function MT.setReplacementProb(self, prob)
     assert(0 <= prob and prob <= 1, "Bad replacement probability")
     self.repl = prob
 end
@@ -246,7 +249,7 @@ end
 ---
 --- Gets the probability of a particle being replaced by another.
 ---
-function getReplacementProb(self)
+function MT.getReplacementProb(self)
     return self.repl
 end
 
@@ -256,7 +259,7 @@ end
 ---
 --- Sets the number of particles.
 ---
-function setParticles(self, n)
+function MT.setParticles(self, n)
     assert(n > 0, "Bad number of particles")
     self.nparts = n
 end
@@ -267,7 +270,7 @@ end
 ---
 --- Returns the number of particles.
 ---
-function getParticles(self)
+function MT.getParticles(self)
     return self.nparts
 end
 
@@ -280,7 +283,7 @@ end
 --- fitness of the given particle as a number with higher values for better
 --- solutions.
 ---
-function setFitnessFunction(self, func)
+function MT.setFitnessFunction(self, func)
     if type(func) ~= "function" then
         error("Bad function")
     end
@@ -293,7 +296,7 @@ end
 ---
 --- Sets the limits for the given dimension.
 ---
-function setLimitsDim(self, dim, min, max)
+function MT.setLimitsDim(self, dim, min, max)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
     self.minp[dim] = min
     self.maxp[dim] = max
@@ -305,7 +308,7 @@ end
 ---
 --- Returns the minimum and maximum values for the given dimension.
 ---
-function getLimitsDim(self, dim)
+function MT.getLimitsDim(self, dim)
     assert(dim > 0 and dim <= self.dims, "Bad dimension")
     return self.minp[dim], self.maxp[dim]
 end
@@ -316,7 +319,7 @@ end
 ---
 --- Sets the limits for all dimensions.
 ---
-function setLimits(self, min, max)
+function MT.setLimits(self, min, max)
     for dim = 1, self.dims do
         self:setLimitsDim(dim, min, max)
     end
@@ -329,7 +332,7 @@ end
 --- Makes the solver round up the fitness to 'decs' decimal places. The value
 --- must be a positive integer or 'nil' to disable this feature.
 ---
-function setFitnessRounding(self, decs)
+function MT.setFitnessRounding(self, decs)
     assert(not decs or decs >= 0, "Bad number of decimal places.")
     self.fitr = decs
 end
@@ -341,7 +344,7 @@ end
 --- Returns the number of decimal places used to round up the fitness values,
 --- or 'nil' if this feature is not used. 
 ---
-function setFitnessRouding(self, decs)
+function MT.setFitnessRouding(self, decs)
     assert(decs > 0, "Bad number of decimal places.")
     self.fitr = decs
 end
@@ -353,7 +356,7 @@ end
 --- Sets the maximum fitness as a termination criterium. Fitness must be a
 --- number or 'nil' to disable its use as termination criterium.
 ---
-function setMaxFitness(self, max)
+function MT.setMaxFitness(self, max)
     self.maxfit = max
 end
 
@@ -364,7 +367,7 @@ end
 --- Returns the maximum fitness, or 'nil' if it is not used as termination
 --- criteria.
 ---
-function getMaxFitness(self)
+function MT.getMaxFitness(self)
     return self.maxfit
 end
 
@@ -376,7 +379,7 @@ end
 --- must be a integer greater than zero or 'nil' to disable its use as
 --- termination criterium.
 ---
-function setMaxIterations(self, max)
+function MT.setMaxIterations(self, max)
     assert(max > 0, "Bad number of iterations")
     self.maxiter = max
 end
@@ -388,7 +391,7 @@ end
 --- Returns the maximum number of iterations, or 'nil' if it is not used as
 --- termination criteria.
 ---
-function getMaxIterations(self)
+function MT.getMaxIterations(self)
     return self.maxiter
 end
 
@@ -400,7 +403,7 @@ end
 --- criterium. This must be a integer greater than zero or 'nil' to disable
 --- its use as termination criterium.
 ---
-function setMaxStagnation(self, max)
+function MT.setMaxStagnation(self, max)
     assert(max > 0, "Bad number of iterations")
     self.maxstag = max
 end
@@ -412,7 +415,7 @@ end
 --- Returns the maximum number of stagnated iterations, or 'nil' if it is not
 --- used as termination criteria.
 ---
-function getMaxStagnation(self)
+function MT.getMaxStagnation(self)
     return self.maxstag
 end
 
@@ -424,7 +427,7 @@ end
 --- function will receive the particle position, an per dimension. Passing
 --- 'nil' disables this feature.
 ---
-function setNewBestHook(self, func)
+function MT.setNewBestHook(self, func)
     if func and type(func) ~= "function" then
         error("Bad function")
     end
@@ -439,7 +442,7 @@ end
 --- will receive the position of the dead particle, an per dimension. Passing
 --- 'nil' disables this feature.
 ---
-function setReplacementHook(self, func)
+function MT.setReplacementHook(self, func)
     if func and type(func) ~= "function" then
         error("Bad function")
     end
@@ -465,7 +468,7 @@ end
 ---
 --- Warning: Abuse of this feature may slow the algorithm down!
 ---
-function setIterationHook(self, func)
+function MT.setIterationHook(self, func)
     if func and type(func) ~= "function" then
         error("Bad function")
     end
@@ -536,7 +539,7 @@ end
 --- pso.TERM_MAX_ITERATIONS, or pso.TERM_MAX_STAGNATION) and the total of
 --- iterations.
 ---
-function run(self)
+function MT.run(self)
     local iter = 0
     local stag = 0
     local p
@@ -585,7 +588,7 @@ function run(self)
 
         if self.maxfit and (self.parts[self.gbest].fit >= self.maxfit) then
             return self.parts[self.gbest].b, self.parts[self.gbest].fit,
-                TERM_CONVERGED, iter
+                M.TERM_CONVERGED, iter
         end
 
         iter = iter + 1        
@@ -595,13 +598,13 @@ function run(self)
 
         if self.maxiter and (iter > self.maxiter) then
             return self.parts[self.gbest].b, self.parts[self.gbest].fit,
-                TERM_MAX_ITERATIONS, iter
+                M.TERM_MAX_ITERATIONS, iter
         end
 
         stag = stag + 1
         if self.maxstag and (stag > self.maxstag) then
             return self.parts[self.gbest].b, self.parts[self.gbest].fit,
-                TERM_MAX_STAGNATION, iter
+                M.TERM_MAX_STAGNATION, iter
         end
 
         for i = 1, self.nparts do
@@ -617,11 +620,11 @@ end
 -- Debug utilities:
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-function printParticles(self)
+local function printParticles(self)
     for i = 1, self.nparts do
         print(unpack(self.parts[i].b))
     end
 end
 
 
-return _M
+return M
