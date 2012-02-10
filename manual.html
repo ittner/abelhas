@@ -19,6 +19,7 @@
  <ul>
   <li><a href="#intro">Introduction</a></li>
   <li><a href="#license">Licensing information</a></li>
+  <li><a href="#development">Development</a></li>
   <li><a href="#download">Download, installation and initialization</a></li>
   <li><a href="#api">API</a></li>
   <li><a href="#examples">Examples</a></li>
@@ -87,7 +88,7 @@ use Abelhas too. The full license text follows: </p>
 
 <blockquote>
 <pre>
-Abelhas (c) 2005-2011 Alexandre Erwin Ittner
+Abelhas (c) 2005-2012 Alexandre Erwin Ittner
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -115,13 +116,31 @@ documentation would be greatly appreciated (but it is not required).
 
 
 
+<h2 id="development">Development</h2>
+
+<p>All current development is <a href="https://github.com/ittner/abelhas">done
+in GitHub</a>. Code contributions are welcome! Just fork the repository and
+send me a pull request or e-mail me a patch.</p>
+
+
+
+
 <h2 id="download">Download, installation and initialization</h2>
 
 <p> Abelhas is a pure-Lua library and can be downloaded from the
-<a href="http://luaforge.net/projects/abelhas/">Abelhas project
-page</a> on <a href="http://www.luaforge.net">LuaForge</a>. After
-downloading, just unpack the distribution package and copy the file
-<code>pso.lua</code> to the Lua packages directory in your system. </p>
+<a href="https://github.com/ittner/abelhas/downloads">download page</a>
+in GitHub. After downloading, just unpack the distribution package and
+copy the file <code>pso.lua</code> to the Lua packages directory in your
+system.</p>
+
+<p>Some old tarballs are also
+<a href="http://luaforge.net/projects/abelhas/">archived in Luaforge</a> but
+all new releases are done in GitHub.</p>
+
+<p>It is also possible to install Abelhas using
+<a href="http://luarocks.org">Lua Rocks</a>. If you have LuaRocks installed
+in your system, just type <code>luarocks install abelhas</code> in the
+shell.</p>
 
 <p>Abelhas uses the Lua 5.1 package system that allows you to simply do a</p>
 <pre class="example">local pso = require("pso")</pre>
