@@ -2,7 +2,7 @@ package = "abelhas"
 version = "1.1-0"
 
 source = {
-   url = "https://github.com/ittner/abelhas/download/abelhas-1.1.tar.gz",
+   url = "https://github.com/downloads/ittner/abelhas/abelhas-1.1.tar.gz",
 }
 
 description = {
